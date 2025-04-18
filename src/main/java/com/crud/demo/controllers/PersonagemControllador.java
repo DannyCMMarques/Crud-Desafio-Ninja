@@ -30,14 +30,14 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("api/v1/personagens")
 @RequiredArgsConstructor
-@Tag(name = "Personagens", description = "Endpoints para operações com personagens do universo Naruto")
+@Tag(name = "Personagens", description = "Endpoints para operações com personagens inspirado no universo Naruto")
 public class PersonagemControllador {
 
         private final PersonagemServiceImpl personagemService;
 
         @PostMapping
         @Operation(summary = "Cadastrar um novo personagem")
-        @ApiResponses(value = {
+        @ApiResponses({
                         @ApiResponse(responseCode = "201", description = "Personagem criado com sucesso"),
                         @ApiResponse(responseCode = "400", description = "Dados inválidos")
         })
@@ -48,7 +48,7 @@ public class PersonagemControllador {
 
         @DeleteMapping("{id}")
         @Operation(summary = "Excluir um personagem por ID")
-        @ApiResponses(value = {
+        @ApiResponses({
                         @ApiResponse(responseCode = "204", description = "Personagem excluído com sucesso"),
                         @ApiResponse(responseCode = "404", description = "Personagem não encontrado")
         })
@@ -59,20 +59,19 @@ public class PersonagemControllador {
 
         @PutMapping("{id}")
         @Operation(summary = "Atualizar um personagem existente")
-        @ApiResponses(value = {
+        @ApiResponses({
                         @ApiResponse(responseCode = "200", description = "Personagem atualizado com sucesso"),
                         @ApiResponse(responseCode = "400", description = "Dados inválidos"),
                         @ApiResponse(responseCode = "404", description = "Personagem não encontrado")
         })
-        public ResponseEntity<PersonagemDTO> atualizar(@PathVariable long id,
-                        @Valid @RequestBody PersonagemDTO dto) {
+        public ResponseEntity<PersonagemDTO> atualizar(@PathVariable long id, @Valid @RequestBody PersonagemDTO dto) {
                 PersonagemDTO atualizado = personagemService.atualizarPersonagem(id, dto);
                 return ResponseEntity.ok(atualizado);
         }
 
         @GetMapping("{id}")
         @Operation(summary = "Buscar personagem por ID")
-        @ApiResponses(value = {
+        @ApiResponses({
                         @ApiResponse(responseCode = "200", description = "Personagem encontrado com sucesso"),
                         @ApiResponse(responseCode = "404", description = "Personagem não encontrado")
         })
@@ -83,18 +82,18 @@ public class PersonagemControllador {
 
         @GetMapping
         @Operation(summary = "Listar ou filtrar personagens", description = "Retorna uma lista paginada de personagens com filtros opcionais.")
-        @ApiResponses(value = {
+        @ApiResponses({
                         @ApiResponse(responseCode = "200", description = "Lista de personagens retornada com sucesso"),
                         @ApiResponse(responseCode = "400", description = "Requisição inválida")
         })
         public ResponseEntity<Page<PersonagemDTO>> filtrarPersonagens(
                         @Parameter(description = "Filtrar por nome") @RequestParam(required = false) String nome,
-                        @Parameter(description = "Filtrar por idade exata") @RequestParam(required = false, defaultValue = "0") long idade,
-                        @Parameter(description = "Filtrar por idade mínima") @RequestParam(required = false, defaultValue = "0") long idadeMin,
-                        @Parameter(description = "Filtrar por idade máxima") @RequestParam(required = false, defaultValue = "0") long idadeMax,
+                        @Parameter(description = "Filtrar por idade exata") @RequestParam(required = false) Long idade,
+                        @Parameter(description = "Filtrar por idade mínima") @RequestParam(required = false) Long idadeMin,
+                        @Parameter(description = "Filtrar por idade máxima") @RequestParam(required = false) Long idadeMax,
                         @Parameter(description = "Filtrar por aldeia") @RequestParam(required = false) String aldeia,
-                        @Parameter(description = "Filtrar por jutsus") @RequestParam(required = false) String jutsus,
-                        @Parameter(description = "Filtrar por chakra") @RequestParam(required = false) String chakra,
+                        @Parameter(description = "Filtrar por tipo de jutsu") @RequestParam(required = false) String jutsuTipo,
+                        @Parameter(description = "Filtrar por chakra") @RequestParam(required = false) Long chakra,
                         @Parameter(description = "Número da página") @RequestParam(defaultValue = "0") int page,
                         @Parameter(description = "Tamanho da página") @RequestParam(defaultValue = "10") int size,
                         @Parameter(description = "Campo para ordenar") @RequestParam(defaultValue = "nome") String sortBy,
@@ -105,7 +104,7 @@ public class PersonagemControllador {
                 Pageable pageable = PageRequest.of(page, size, sort);
 
                 Page<PersonagemDTO> personagens = personagemService.filtrarPersonagens(
-                                nome, idade, idadeMin, idadeMax, aldeia, jutsus, chakra, pageable);
+                                nome, idade, idadeMin, idadeMax, aldeia, jutsuTipo, chakra, pageable);
 
                 if (personagens.isEmpty()) {
                         return ResponseEntity.noContent().build();

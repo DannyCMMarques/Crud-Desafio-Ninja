@@ -12,9 +12,9 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
-            .info(new Info()
-                .title("API do Naruto")
-                .version("1.0")
-                .description("API do Naruto para CRUD de personagens"));
+                .info(new Info()
+                        .title("API do Naruto")
+                        .version("1.0")
+                        .description("API do Naruto para CRUD de personagens"));
     }
 }

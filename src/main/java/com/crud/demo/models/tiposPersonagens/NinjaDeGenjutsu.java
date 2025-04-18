@@ -1,7 +1,5 @@
 package com.crud.demo.models.tiposPersonagens;
 
-
-
 import com.crud.demo.models.Personagem;
 import com.crud.demo.models.contratos.Ninja;
 

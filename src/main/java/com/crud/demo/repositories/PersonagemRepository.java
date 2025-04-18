@@ -8,10 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import com.crud.demo.models.Personagem;
 
-
 @Repository
-public interface PersonagemRepository extends JpaRepository<Personagem, Long>,JpaSpecificationExecutor<Personagem>{
+public interface PersonagemRepository extends JpaRepository<Personagem, Long>, JpaSpecificationExecutor<Personagem> {
 
-
-Optional<Personagem> findByNome(String nome);
+    Optional<Personagem> findByNome(String nome);
 }

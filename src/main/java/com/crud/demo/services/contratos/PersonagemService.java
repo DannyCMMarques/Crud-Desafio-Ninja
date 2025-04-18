@@ -15,7 +15,9 @@ public interface PersonagemService {
 
     PersonagemDTO atualizarPersonagem(Long id, PersonagemDTO personagemDTO);
 
-    Page<PersonagemDTO> filtrarPersonagens(String nome, long idade, long idadeMin, long idadeMax,
-            String aldeia, String jutsus, String chakra, Pageable pageable);
+    Page<PersonagemDTO> filtrarPersonagens(String nome, Long idade, Long idadeMin, Long idadeMax,
+            String aldeia, String jutsus, Long chakra, Pageable pageable);
+
+
 
 }

@@ -18,7 +18,7 @@ public class PersonagemValidator {
 
     public void validarCadastro(String nome) {
 
-        Optional<Personagem> nomeCadastrado =  personagemRepository.findByNome(nome);
+        Optional<Personagem> nomeCadastrado = personagemRepository.findByNome(nome);
         if (nomeCadastrado.isPresent()) {
             throw new NomeJaCadastradoException(nomeCadastrado.get().getNome());
         }
