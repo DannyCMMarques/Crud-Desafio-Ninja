@@ -23,7 +23,7 @@ Projeto desenvolvido como parte de um desafio de Programação Orientada a Objet
 A cobertura inclui:
 
 - **Testes de integração** com JUnit 5 & MockMvc nos controllers de Usuário, Personagem, Login e Ação.
-- **Testes unitários** com Mockito nos serviços e validadores.
+- **Testes unitários** com Mockito.
 <p align="center">
     <img src="https://github.com/user-attachments/assets/fbe27a35-5a75-40db-a15d-687de39cfd0c" alt="Cobertura de Testes" width="300"/>
   </p>
