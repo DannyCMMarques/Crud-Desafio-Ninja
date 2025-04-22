@@ -2,10 +2,10 @@ package com.crud.demo.utils;
 
 import java.util.List;
 
-import com.crud.demo.models.Jutsu;
-import com.crud.demo.models.Personagem;
 import com.crud.demo.models.DTO.JutsuDTO;
 import com.crud.demo.models.DTO.PersonagemDTO;
+import com.crud.demo.models.Jutsu;
+import com.crud.demo.models.Personagem;
 
 public class TestDataFactory {
 

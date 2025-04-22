@@ -1,18 +1,20 @@
 package com.crud.demo.services;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 
 import com.crud.demo.factories.PersonagemFactoryImpl;
-import com.crud.demo.models.Personagem;
 import com.crud.demo.models.DTO.PersonagemDTO;
+import com.crud.demo.models.Personagem;
 import com.crud.demo.models.mappers.PersonagemMapper;
 import com.crud.demo.models.tiposPersonagens.NinjaDeNinjutsu;
 import com.crud.demo.utils.TestDataFactory;
@@ -44,7 +46,8 @@ class AcoesServiceTest {
     }
 
     @Test
-    void testAtacarComPersonagemNinja() {
+        @DisplayName("Deve atacar com sucesso quando o personagem é ninja de Ninjutsu")
+    void deveAtacarComPersonagemNinjaComSucesso() {
         when(personagemMapper.toDto(personagemMock)).thenReturn(personagemDTO);
         when(personagemMapper.toEntity(personagemDTO)).thenReturn(personagemMock);
         when(personagemValidator.validarExistencia(1L)).thenReturn(personagemMock);
@@ -59,7 +62,8 @@ class AcoesServiceTest {
     }
 
     @Test
-    void testAtacarComPersonagemNaoNinja() {
+    @DisplayName("Deve informar que não é ninja ao atacar com personagem não ninja")
+    void deveInformarNaoNinjaAoAtacarComPersonagemNaoNinja() {
         when(personagemValidator.validarExistencia(1L)).thenReturn(personagemMock);
 
         when(personagemFactoryImpl.construirTipoPersonagem(personagemDTO)).thenReturn(personagemMock);
@@ -70,7 +74,8 @@ class AcoesServiceTest {
     }
 
     @Test
-    void testDefenderComPersonagemNaoNinja() {
+    @DisplayName("Deve informar que não é ninja ao defender com personagem não ninja")
+    void deveInformarNaoNinjaAoDefenderComPersonagemNaoNinja() {
         when(personagemValidator.validarExistencia(anyLong())).thenReturn(personagemMock);
 
         when(personagemFactoryImpl.construirTipoPersonagem(any())).thenReturn(personagemMock);

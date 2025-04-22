@@ -1,16 +1,18 @@
 package com.crud.demo.services;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,9 +22,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.crud.demo.factories.PersonagemFactoryImpl;
+import com.crud.demo.models.DTO.PersonagemDTO;
 import com.crud.demo.models.Jutsu;
 import com.crud.demo.models.Personagem;
-import com.crud.demo.models.DTO.PersonagemDTO;
 import com.crud.demo.models.mappers.JutsuMapper;
 import com.crud.demo.models.mappers.PersonagemMapper;
 import com.crud.demo.repositories.JutsuRepository;
@@ -65,7 +67,7 @@ class PersonagemServiceTest {
 
     @Test
     @DisplayName("Deve salvar um personagem com jutsu associado corretamente")
-    void testCriarPersonagem() {
+    void deveSalvarPersonagemComSucesso() {
         when(personagemRepository.save(any(Personagem.class))).thenReturn(personagemMock);
         when(personagemMapper.toEntity(personagemDTO)).thenReturn(personagemMock);
         when(personagemMapper.toDto(personagemMock)).thenReturn(personagemDTO);
@@ -84,7 +86,7 @@ class PersonagemServiceTest {
 
     @Test
     @DisplayName("Deve buscar um personagem por ID")
-    void testBuscarPersonagemPorID() {
+    void deveBuscarPersonagemPorIdComSucesso() {
         when(personagemValidator.validarExistencia(1L)).thenReturn(personagemMock);
         when(personagemMapper.toDto(personagemMock)).thenReturn(personagemDTO);
 
@@ -97,7 +99,7 @@ class PersonagemServiceTest {
 
     @Test
     @DisplayName("Deve listar todos os personagens")
-    void testListarPersonagens() {
+    void deveListarPersonagensComSucesso() {
         when(personagemRepository.findAll(any(Specification.class), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(personagemMock)));
 
@@ -115,7 +117,7 @@ class PersonagemServiceTest {
 
     @Test
     @DisplayName("Deve atualizar um personagem")
-    void testAtualizarPersonagem() {
+    void deveAtualizarPersonagemComSucesso() {
         when(personagemValidator.validarExistencia(1L)).thenReturn(personagemMock);
 
         when(personagemMapper.toDto(personagemMock)).thenReturn(personagemDTO);
@@ -136,7 +138,7 @@ class PersonagemServiceTest {
 
     @Test
     @DisplayName("Deve deletar um personagem")
-    void testDeletarPersonagem() {
+    void deveDeletarPersonagemComSucesso() {
         when(personagemValidator.validarExistencia(1L)).thenReturn(personagemMock);
 
         personagemService.deletarPersonagem(1L);

@@ -19,7 +19,7 @@ import com.crud.demo.repositories.JutsuRepository;
 import com.crud.demo.repositories.PersonagemRepository;
 import com.crud.demo.services.contratos.PersonagemService;
 import com.crud.demo.specifications.PersonagemSpecifications;
-import com.crud.demo.utils.converters.SpecificationBuilder;
+import com.crud.demo.utils.SpecificationBuilder;
 import com.crud.demo.validators.PersonagemValidator;
 
 import lombok.RequiredArgsConstructor;
