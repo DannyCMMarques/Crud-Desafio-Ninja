@@ -21,7 +21,6 @@
     </properties>
 
     <dependencies>
-        <!-- Spring Boot Dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -59,7 +58,6 @@
             <version>10.11.0</version>
         </dependency>
 
-        <!-- JWT Dependencies -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -78,7 +76,6 @@
             <version>0.11.5</version>
         </dependency>
 
-        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -90,27 +87,23 @@
             <artifactId>spring-boot-starter-logging</artifactId>
         </dependency>
 
-        <!-- PostgreSQL Database Driver -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- SpringDoc for API Documentation -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.5.0</version>
         </dependency>
 
-        <!-- Spring Web for testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Test Dependencies -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
@@ -126,19 +119,17 @@
 
     <build>
         <plugins>
-            <!-- Maven Surefire Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
                 <configuration>
-                    <forkCount>1</forkCount> <!-- Garantir que o Maven use um processo separado para os testes -->
-                    <reuseForks>false</reuseForks> <!-- Não reutiliza forks entre os testes -->
-                    <argLine>-Dspring.profiles.active=test</argLine> <!-- Define o perfil de testes para evitar problemas com o contexto -->
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks> 
+                    <argLine>-Dspring.profiles.active=test</argLine> 
                 </configuration>
             </plugin>
 
-            <!-- Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -153,7 +144,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Spring Boot Maven Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
