@@ -1,4 +1,4 @@
-package com.crud.demo.utils.converters;
+package com.crud.demo.utils;
 
 import org.springframework.data.jpa.domain.Specification;
 

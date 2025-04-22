@@ -1,5 +1,6 @@
 package com.crud.demo.Exceptions.handler;
 
+import java.security.SignatureException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +24,7 @@ import com.crud.demo.Exceptions.RestErrorMessage;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+    public ResponseEntity<Object> handleMethodArgumentNotValid(
             @NonNull MethodArgumentNotValidException ex,
             @NonNull HttpHeaders headers,
             @NonNull HttpStatusCode status,
@@ -44,6 +45,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<RestErrorMessage> handleApiException(ApiException ex) {
         return ResponseEntity.status(ex.getStatus())
                 .body(new RestErrorMessage(ex.getStatus(), ex.getMessage(), LocalDateTime.now()));
+    }
+    
+    @ExceptionHandler(SignatureException.class)
+    public ResponseEntity<RestErrorMessage> handleSignatureException(SignatureException ex) {
+        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.UNAUTHORIZED, "O token está inválido", LocalDateTime.now());
+        return new ResponseEntity<>(errorMessage, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception.class)

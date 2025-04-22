@@ -26,6 +26,7 @@ services:
       spring.datasource.url: jdbc:postgresql://postgres:5432/crudNaruto
       spring.datasource.username: postgres
       spring.datasource.password: password
+
       # spring.jpa.hibernate.ddl-auto: update
       spring.profiles.active: docker
     ports:
