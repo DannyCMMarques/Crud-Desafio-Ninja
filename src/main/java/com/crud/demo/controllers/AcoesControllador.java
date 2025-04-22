@@ -3,6 +3,8 @@ package com.crud.demo.controllers;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "Ações dos Personagens", description = "Endpoints para realizar ações (atacar/defender) dos personagens")
 public class AcoesControllador {
+    private static final Logger log = LoggerFactory.getLogger(AcoesControllador.class);
 
     private final AcoesServiceImpl acoesService;
 
@@ -36,8 +39,10 @@ public class AcoesControllador {
             @PathVariable Long id) {
 
         String resultado = acoesService.atacar(id);
+        log.debug("Resultado do ataque para id={}: {}", id, resultado);
         Map<String, String> response = new HashMap<>();
         response.put("message", resultado);
+        
         return ResponseEntity.ok(response);
     }
 
@@ -52,6 +57,7 @@ public class AcoesControllador {
             @PathVariable Long id) {
 
         String resultado = acoesService.defender(id);
+        log.debug("Resultado da defesa para id={}: {}", id, resultado);
         Map<String, String> response = new HashMap<>();
         response.put("message", resultado);
         return ResponseEntity.ok(response);
