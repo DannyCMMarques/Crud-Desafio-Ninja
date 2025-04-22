@@ -62,7 +62,7 @@ A cobertura inclui:
 
 ```bash
 git clone https://github.com/DannyCMMarques/Crud-Desafio-Ninja.git
-cd Crud-Desafio-Ninja
+cd demo
 
 docker-compose build
 docker-compose up
