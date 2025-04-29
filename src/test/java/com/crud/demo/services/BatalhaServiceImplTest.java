@@ -116,10 +116,10 @@ class BatalhaServiceImplTest {
         verify(batalhaRepository).deleteById(1L);
     }
 
+    
     @Test
     @DisplayName("getBatalhaById deve retornar batalha mapeada")
     void deveBuscarBatalhaPorId() {
-        // Arrange
         Long id = 1L;
 
         when(batalhaRepository.findById(id))

@@ -93,17 +93,15 @@ class JutsuServiceImplTest {
 
         Jutsu resultado = jutsuService.getJutsuById(1L);
 
-        // Assert
         assertThat(resultado).isEqualTo(jutsu);
     }
 
+    
     @Test
     @DisplayName("Deve lançar exceção ao não encontrar jutsu por ID")
     void deveLancarExcecaoQuandoNaoEncontrarJutsuPorId() {
-        // Arrange
         when(jutsuRepository.findById(1L)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThatThrownBy(() -> jutsuService.getJutsuById(1L))
             .isInstanceOf(JutsuNaoEncontradoException.class);
     }
