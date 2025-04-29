@@ -90,10 +90,8 @@ class ChakrasServiceImplTest {
     @Test
     @DisplayName("Deve adicionar histórico quando jogador tem chakra suficiente")
     void deveAdicionarHistoricoQuandoTemChakraSuficiente() {
-        // Act
         chakrasService.verificarChakra(atacante, jutsuDTO, ataqueEvent);
 
-        // Assert
         verify(jutsuService, times(1)).adicionarHistorico(atacante, jutsuDTO);
         assertThat(ataqueEvent.getJutsuAtaque()).isEqualTo(jutsuDTO);
     }
@@ -103,10 +101,9 @@ class ChakrasServiceImplTest {
     void deveEnviarAlertaQuandoNaoTemChakraSuficiente() {
         atacante.setValor_chakra(10);
 
-        // Act
+        
         chakrasService.verificarChakra(atacante, jutsuDTO, ataqueEvent);
 
-        // Assert
         verify(alertNotificacoes, times(1))
             .enviarAlertaPrivado(eq("Atacante"), any(AlertaDTO.class));
         assertThat(ataqueEvent.getJutsuAtaque()).isNull();
