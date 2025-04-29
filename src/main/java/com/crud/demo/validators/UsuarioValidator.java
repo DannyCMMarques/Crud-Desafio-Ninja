@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class UsuarioValidator {
+
     private final UsuarioRepository usuarioRepository;
 
     public void validarCadastro(String email) {
@@ -27,6 +28,11 @@ public class UsuarioValidator {
 
     public Usuario validarExistencia(Long id) {
         return usuarioRepository.findById(id)
+                .orElseThrow(UsuarioNaoEncontradoException::new);
+    }
+
+    public Usuario validarExistencia(String nome) {
+        return usuarioRepository.findByNome(nome)
                 .orElseThrow(UsuarioNaoEncontradoException::new);
     }
 

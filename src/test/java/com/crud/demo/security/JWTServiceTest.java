@@ -18,7 +18,6 @@ public class JWTServiceTest {
 
     private JWTService jwtService;
     private static final long DEFAULT_EXPIRATION_MS = 10_000L;
-    private static final long SHORT_EXPIRATION_MS = 1_000L;
 
     @BeforeEach
     void setUp() {

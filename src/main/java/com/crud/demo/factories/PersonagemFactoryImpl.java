@@ -13,7 +13,7 @@ import com.crud.demo.models.mappers.PersonagemMapper;
 import com.crud.demo.models.tiposPersonagens.NinjaDeGenjutsu;
 import com.crud.demo.models.tiposPersonagens.NinjaDeNinjutsu;
 import com.crud.demo.models.tiposPersonagens.NinjaDeTaijutsu;
-
+import com.crud.demo.models.enuns.CategoriaEspecialidadeEnum;
 import lombok.AllArgsConstructor;
 
 @Component
@@ -34,15 +34,10 @@ public class PersonagemFactoryImpl implements PersonagemFactory {
     public Personagem construirTipoPersonagem(PersonagemDTO dto) {
         Personagem personagemEntity = personagemMapper.toEntity(dto);
 
-        return personagemEntity.getJutsus().stream()
-                .map(j -> j.getTipo().toUpperCase())
-                .filter(mapaDeTipos::containsKey)
-                .findFirst()
-                .map(tipo -> {
-                    Personagem subclasse = mapaDeTipos.get(tipo).get();
-                    personagemMapper.preencherDados(subclasse, personagemEntity);
-                    return subclasse;
-                })
-                .orElse(personagemEntity);
+        CategoriaEspecialidadeEnum especialidade = personagemEntity.getEspecialidade();
+        Personagem subClasse = mapaDeTipos.get(especialidade.name()).get();
+        personagemMapper.preencherDados(subClasse, personagemEntity);
+        return subClasse;
+
     }
 }

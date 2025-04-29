@@ -45,7 +45,7 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-        @DisplayName("Deve retornar Bad Request com erros de validação")
+    @DisplayName("Deve retornar Bad Request com erros de validação")
     void deveRetornarBadRequestComErrosDeValidacao() {
         FieldError fe1 = new FieldError("obj", "field1", "must not be blank");
         FieldError fe2 = new FieldError("obj", "field2", "size must be >= 5");
@@ -77,7 +77,8 @@ class GlobalExceptionHandlerTest {
     @Test
     @DisplayName("Deve retornar NOT_FOUND para ApiException personalizada")
     void deveRetornarNotFoundParaApiException() {
-        ApiException apiEx = new ApiException("Resource not found", HttpStatus.NOT_FOUND) {};
+        ApiException apiEx = new ApiException("Resource not found", HttpStatus.NOT_FOUND) {
+        };
 
         ResponseEntity<RestErrorMessage> response = handler.handleApiException(apiEx);
 

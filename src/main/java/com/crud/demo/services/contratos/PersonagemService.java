@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.crud.demo.models.DTO.PersonagemDTO;
+import com.crud.demo.models.enuns.CategoriaEspecialidadeEnum;
 
 public interface PersonagemService {
 
@@ -15,9 +16,13 @@ public interface PersonagemService {
 
     PersonagemDTO atualizarPersonagem(Long id, PersonagemDTO personagemDTO);
 
-    Page<PersonagemDTO> filtrarPersonagens(String nome, Long idade, Long idadeMin, Long idadeMax,
-            String aldeia, String jutsus, Long chakra, Pageable pageable);
-
-
+    Page<PersonagemDTO> filtrarPersonagens(
+            String nome,
+            Long idade,
+            Long idadeMin,
+            Long idadeMax,
+            String aldeia,
+            Pageable pageable,
+            CategoriaEspecialidadeEnum especialidade);
 
 }
