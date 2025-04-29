@@ -294,7 +294,7 @@ docker-compose build
 docker-compose up
 ```
 
-## 📊 Cobertura de Testes
+### 📊 Cobertura de Testes
 
 A cobertura inclui:
 
@@ -318,9 +318,9 @@ A cobertura inclui:
 </p>
 
 ---
-# 🧪 Como Testar a Aplicação (WebSocket + STOMP)
+## 🧪 Como Testar a Aplicação (WebSocket + STOMP)
 
-## 1. Configurações Iniciais
+### 1. Configurações Iniciais
 
 - Realizar o cadastro de um usuário via Swagger.
 - Realizar o login para obter o token de autenticação.
@@ -333,7 +333,7 @@ A cobertura inclui:
 
 ---
 
-## 2. Sobre os Testes com WebSocket
+### 2. Sobre os Testes com WebSocket
 
 Devido à utilização de **WebSocket com STOMP**, houve uma dificuldade para realizar testes tradicionais, pois ferramentas como Swagger ou Postman, de forma nativa, apenas testam WebSocket puro, não STOMP.
 
@@ -349,7 +349,7 @@ Basta utilizar esses binários no Postman conforme mostrado abaixo.
 
 ---
 
-## 3. Instruções de Teste via Postman
+### 3. Instruções de Teste via Postman
 
 - URL para conectar: `ws://localhost:8080/ws`
 - Método: `WebSocket`
