@@ -47,8 +47,8 @@ public class JWTService {
 
     public String gerarToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         log.debug("[gerarToken] Adicionando claims adicionais e gerando token.");
-        extraClaims.put("role", "USER");  
-        extraClaims.put("created_at", new Date());  
+        extraClaims.put("role", "USER");
+        extraClaims.put("created_at", new Date());
 
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
@@ -106,9 +106,9 @@ public class JWTService {
         return extrairClaim(token, claims -> claims.get("created_at", Date.class));
     }
 
-private Key getSignInKey() {
-    log.debug("[getSignInKey] Obtendo a chave secreta para assinar o token.");
-    byte[] keyBytes = Decoders.BASE64.decode(secretKey); 
-    return Keys.hmacShaKeyFor(keyBytes); 
-}
+    private Key getSignInKey() {
+        log.debug("[getSignInKey] Obtendo a chave secreta para assinar o token.");
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 }

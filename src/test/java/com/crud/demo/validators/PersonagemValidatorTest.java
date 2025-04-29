@@ -10,7 +10,6 @@ import com.crud.demo.Exceptions.personagemException.PersonagemNaoEncontradoExcep
 import com.crud.demo.models.Personagem;
 import com.crud.demo.repositories.PersonagemRepository;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

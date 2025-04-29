@@ -1,6 +1,8 @@
 package com.crud.demo.models.tiposPersonagens;
 
+import com.crud.demo.events.EstatisticaDoJogadorEvent;
 import com.crud.demo.models.Personagem;
+import com.crud.demo.models.DTO.JutsuDTO;
 import com.crud.demo.models.contratos.Ninja;
 
 import jakarta.persistence.DiscriminatorValue;
@@ -8,21 +10,27 @@ import jakarta.persistence.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@Entity
-@DiscriminatorValue("GENJUTSU")
 @Data
 @EqualsAndHashCode(callSuper = true)
-
+@DiscriminatorValue("GENJUTSU")
+@Entity
 public class NinjaDeGenjutsu extends Personagem implements Ninja {
 
+
     @Override
-    public String usarJutsu(Personagem personagem) {
-        return personagem.getNome() + " está usando um jutsu de Genjutsu!";
+    public String usarJutsu(Personagem personagem, JutsuDTO jutsu) {
+
+        return String.format(
+                "Houve um ataque: %s,um ninja de Genjutsu, usa '%s' e causa a perda de %d chakras no adversário",
+                this.getNome(),
+                jutsu.getTipo(),
+                jutsu.getDano());
     }
 
     @Override
-    public String desviar(Personagem personagem) {
-        return personagem.getNome() + " está desviando de um ataque utilizando Genjutsu!";
+    public String desviar(EstatisticaDoJogadorEvent defensor) {
+        return String.format(
+                "Defesa: %s,um ninja de Genjutsu, desviou do ataque ",
+                this.getNome());
     }
-
 }

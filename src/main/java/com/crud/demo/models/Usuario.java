@@ -28,6 +28,7 @@ import lombok.NoArgsConstructor;
 @Builder
 
 public class Usuario implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

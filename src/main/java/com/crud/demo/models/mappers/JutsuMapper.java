@@ -1,6 +1,7 @@
 package com.crud.demo.models.mappers;
 
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -11,24 +12,38 @@ import com.crud.demo.models.DTO.JutsuDTO;
 public class JutsuMapper {
 
     public JutsuDTO toDto(Jutsu jutsu) {
-        JutsuDTO dto = new JutsuDTO();
-        dto.setId(jutsu.getId());
-        dto.setTipo(jutsu.getTipo());
-        return dto;
+        return JutsuDTO.builder()
+                .id(jutsu.getId())
+                .tipo(jutsu.getTipo())
+                .dano(jutsu.getDano())
+                .consumo_de_chakra(jutsu.getConsumo_de_chakra())
+                .categoria(jutsu.getCategoria())
+                .build();
     }
 
     public Jutsu toEntity(JutsuDTO dto) {
         return Jutsu.builder()
                 .id(dto.getId())
                 .tipo(dto.getTipo())
+                .dano(dto.getDano())
+                .consumo_de_chakra(dto.getConsumo_de_chakra())
+                .categoria(dto.getCategoria())
                 .build();
     }
 
-    public List<JutsuDTO> toDtoList(List<Jutsu> jutsus) {
-        return jutsus.stream().map(this::toDto).toList();
+    public Map<String, JutsuDTO> toDtoMap(Map<String, Jutsu> jutsus) {
+        return jutsus.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> toDto(entry.getValue())
+                ));
     }
 
-    public List<Jutsu> toEntityList(List<JutsuDTO> dtos) {
-        return dtos.stream().map(this::toEntity).toList();
+    public Map<String, Jutsu> toEntityMap(Map<String, JutsuDTO> dtos) {
+        return dtos.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> toEntity(entry.getValue())
+                ));
     }
 }

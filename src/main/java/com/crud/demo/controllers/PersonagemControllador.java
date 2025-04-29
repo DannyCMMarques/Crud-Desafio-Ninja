@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.crud.demo.models.DTO.PersonagemDTO;
+import com.crud.demo.models.enuns.CategoriaEspecialidadeEnum;
 import com.crud.demo.services.PersonagemServiceImpl;
 import com.crud.demo.utils.UriLocationUtils;
 
@@ -36,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "Personagens", description = "Endpoints para operações com personagens inspirado no universo Naruto")
 public class PersonagemControllador {
+
         private static final Logger log = LoggerFactory.getLogger(PersonagemControllador.class);
 
         private final PersonagemServiceImpl personagemService;
@@ -104,8 +106,7 @@ public class PersonagemControllador {
                         @Parameter(description = "Filtrar por idade mínima") @RequestParam(required = false) Long idadeMin,
                         @Parameter(description = "Filtrar por idade máxima") @RequestParam(required = false) Long idadeMax,
                         @Parameter(description = "Filtrar por aldeia") @RequestParam(required = false) String aldeia,
-                        @Parameter(description = "Filtrar por tipo de jutsu") @RequestParam(required = false) String jutsuTipo,
-                        @Parameter(description = "Filtrar por chakra") @RequestParam(required = false) Long chakra,
+                        @Parameter(description = "Filtrar por chakra") @RequestParam(required = false) CategoriaEspecialidadeEnum especialidade,
                         @Parameter(description = "Número da página") @RequestParam(defaultValue = "0") int page,
                         @Parameter(description = "Tamanho da página") @RequestParam(defaultValue = "10") int size,
                         @Parameter(description = "Campo para ordenar") @RequestParam(defaultValue = "nome") String sortBy,
@@ -115,8 +116,8 @@ public class PersonagemControllador {
 
                 Pageable pageable = PageRequest.of(page, size, sort);
 
-                Page<PersonagemDTO> personagens = personagemService.filtrarPersonagens(
-                                nome, idade, idadeMin, idadeMax, aldeia, jutsuTipo, chakra, pageable);
+                Page<PersonagemDTO> personagens = personagemService.filtrarPersonagens(nome, idade, idadeMin, idadeMax,
+                                aldeia, pageable, especialidade);
                 log.debug("Total de personagens encontrados: {}", personagens.getTotalElements());
                 if (personagens.isEmpty()) {
                         log.info("Nenhum personagem encontrado para os filtros informados.");
@@ -124,6 +125,6 @@ public class PersonagemControllador {
                 }
 
                 return ResponseEntity.ok(personagens);
-        }
 
+        }
 }

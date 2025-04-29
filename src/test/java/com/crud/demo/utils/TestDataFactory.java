@@ -1,11 +1,8 @@
 package com.crud.demo.utils;
 
-import java.util.List;
-
-import com.crud.demo.models.DTO.JutsuDTO;
-import com.crud.demo.models.DTO.PersonagemDTO;
 import com.crud.demo.models.Jutsu;
 import com.crud.demo.models.Personagem;
+import com.crud.demo.models.DTO.PersonagemDTO;
 
 public class TestDataFactory {
 
@@ -22,8 +19,6 @@ public class TestDataFactory {
         dto.setNome(NOME_PADRAO);
         dto.setAldeia(ALDEIA);
         dto.setIdade(IDADE);
-        dto.setChakra(CHAKRA);
-        dto.setJutsus(List.of(new JutsuDTO(1L, NINJUTSU)));
         return dto;
     }
 
@@ -32,8 +27,6 @@ public class TestDataFactory {
         dto.setNome("Rock Lee");
         dto.setAldeia(ALDEIA);
         dto.setIdade(25L);
-        dto.setChakra(CHAKRA);
-        dto.setJutsus(List.of(new JutsuDTO(2L, TAIJUTSU)));
         return dto;
     }
 
@@ -42,8 +35,6 @@ public class TestDataFactory {
         dto.setNome("Itachi Uchiha");
         dto.setAldeia(ALDEIA);
         dto.setIdade(28L);
-        dto.setChakra(CHAKRA);
-        dto.setJutsus(List.of(new JutsuDTO(3L, GENJUTSU)));
         return dto;
     }
 
@@ -64,8 +55,6 @@ public class TestDataFactory {
         personagem.setNome(NOME_PADRAO);
         personagem.setAldeia(ALDEIA);
         personagem.setIdade(IDADE);
-        personagem.setChakra(CHAKRA);
-        personagem.setJutsus(List.of(criarJutsuNinjutsu()));
         return personagem;
     }
 
@@ -74,8 +63,6 @@ public class TestDataFactory {
         personagem.setNome("Rock Lee");
         personagem.setAldeia(ALDEIA);
         personagem.setIdade(25L);
-        personagem.setChakra(CHAKRA);
-        personagem.setJutsus(List.of(criarJutsuTaijutsu()));
         return personagem;
     }
 
@@ -84,8 +71,6 @@ public class TestDataFactory {
         personagem.setNome("Itachi Uchiha");
         personagem.setAldeia(ALDEIA);
         personagem.setIdade(28L);
-        personagem.setChakra(CHAKRA);
-        personagem.setJutsus(List.of(criarJutsuGenjutsu()));
         return personagem;
     }
 }

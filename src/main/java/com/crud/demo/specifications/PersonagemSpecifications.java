@@ -3,6 +3,7 @@ package com.crud.demo.specifications;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.crud.demo.models.Personagem;
+import com.crud.demo.models.enuns.CategoriaEspecialidadeEnum;
 
 import jakarta.persistence.criteria.Join;
 
@@ -21,11 +22,6 @@ public class PersonagemSpecifications {
         public static Specification<Personagem> comAldeiaContendo(String aldeia) {
                 return (root, query, builder) -> aldeia == null || aldeia.isBlank() ? null
                                 : builder.like(builder.lower(root.get("aldeia")), "%" + aldeia.toLowerCase() + "%");
-        }
-
-        public static Specification<Personagem> comChakraIgualA(Long chakra) {
-                return (root, query, builder) -> chakra == null ? null
-                                : builder.equal(root.get("chakra"), chakra);
         }
 
         public static Specification<Personagem> comJutsusContendo(String tipoJutsu) {
@@ -55,5 +51,15 @@ public class PersonagemSpecifications {
                                 return builder.lessThanOrEqualTo(root.get("idade"), idadeMax);
                         }
                 };
+        }
+
+        public static Specification<Personagem> comEspecialidade(CategoriaEspecialidadeEnum especialidade) {
+                return (root, query, builder) -> {
+                        if (especialidade == null) {
+                                return null;
+                        }
+                        return builder.equal(root.get("especialidade"), especialidade);
+                };
+
         }
 }
