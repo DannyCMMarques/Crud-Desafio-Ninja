@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class PersonagemValidator {
+
     private final PersonagemRepository personagemRepository;
 
     public void validarCadastro(String nome) {
@@ -27,6 +28,11 @@ public class PersonagemValidator {
 
     public Personagem validarExistencia(Long id) {
         return personagemRepository.findById(id)
+                .orElseThrow(PersonagemNaoEncontradoException::new);
+    }
+
+    public Personagem validarExistencia(String nome) {
+        return personagemRepository.findByNome(nome)
                 .orElseThrow(PersonagemNaoEncontradoException::new);
     }
 

@@ -3,6 +3,7 @@ package com.crud.demo.utils;
 import org.springframework.data.jpa.domain.Specification;
 
 public class SpecificationBuilder<T> {
+
     private Specification<T> spec = Specification.where(null);
 
     public SpecificationBuilder<T> add(Specification<T> newSpec) {

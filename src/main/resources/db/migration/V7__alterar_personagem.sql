@@ -1,0 +1,1 @@
+ALTER TABLE personagens ADD COLUMN dtype VARCHAR(31) ;

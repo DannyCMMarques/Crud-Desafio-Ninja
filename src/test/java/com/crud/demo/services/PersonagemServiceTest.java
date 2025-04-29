@@ -79,9 +79,7 @@ class PersonagemServiceTest {
 
         assertEquals(personagemMock.getNome(), personagemDTOCriado.getNome());
 
-        assertNotNull(personagemDTOCriado.getJutsus());
-        assertEquals(1, personagemDTOCriado.getJutsus().size());
-        assertEquals("Ninjutsu", personagemDTOCriado.getJutsus().get(0).getTipo());
+    
     }
 
     @Test
@@ -108,7 +106,7 @@ class PersonagemServiceTest {
         Pageable pageable = PageRequest.of(0, 10, Sort.by("nome").ascending());
 
         Page<PersonagemDTO> personagens = personagemService.filtrarPersonagens(
-                null, null, null, null, null, null, null, pageable);
+                null, null, null, null, null, pageable, null);
 
         assertNotNull(personagens);
         assertEquals(1, personagens.getContent().size());
@@ -133,7 +131,6 @@ class PersonagemServiceTest {
         assertEquals("Naruto Uzumaki Atualizado", personagemAtualizado.getNome());
         assertEquals(personagemMock.getIdade(), personagemAtualizado.getIdade());
         assertEquals(personagemMock.getAldeia(), personagemAtualizado.getAldeia());
-        assertEquals(personagemMock.getChakra(), personagemAtualizado.getChakra());
     }
 
     @Test

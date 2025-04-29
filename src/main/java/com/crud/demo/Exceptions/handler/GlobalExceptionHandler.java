@@ -46,7 +46,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(ex.getStatus())
                 .body(new RestErrorMessage(ex.getStatus(), ex.getMessage(), LocalDateTime.now()));
     }
-    
+
     @ExceptionHandler(SignatureException.class)
     public ResponseEntity<RestErrorMessage> handleSignatureException(SignatureException ex) {
         RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.UNAUTHORIZED, "O token está inválido", LocalDateTime.now());
