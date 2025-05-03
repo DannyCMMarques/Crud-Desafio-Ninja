@@ -38,8 +38,7 @@ class WebSocketConfigTest {
 
         when(stompEndpointRegistry.addEndpoint("/ws")).thenReturn(registration);
         when(registration.setAllowedOriginPatterns("*")).thenReturn(registration);
-        when(registration.withSockJS()).thenReturn(null); // Aqui não importa o retorno no teste
-
+        when(registration.withSockJS()).thenReturn(null); 
         webSocketConfig.registerStompEndpoints(stompEndpointRegistry);
 
         verify(stompEndpointRegistry).addEndpoint("/ws");

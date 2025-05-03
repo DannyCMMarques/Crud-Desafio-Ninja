@@ -3,31 +3,37 @@ package com.crud.demo.factories;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-
 import com.crud.demo.models.Personagem;
-import com.crud.demo.models.DTO.PersonagemDTO;
+import com.crud.demo.models.DTO.personagem.PersonagemRequestDTO;
 import com.crud.demo.models.enuns.CategoriaEspecialidadeEnum;
 import com.crud.demo.models.mappers.PersonagemMapper;
 import com.crud.demo.models.tiposPersonagens.NinjaDeGenjutsu;
 import com.crud.demo.models.tiposPersonagens.NinjaDeNinjutsu;
 import com.crud.demo.models.tiposPersonagens.NinjaDeTaijutsu;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class PersonagemFactoryImplTest {
 
+    @Mock
     private PersonagemMapper personagemMapper;
+
     private PersonagemFactoryImpl personagemFactory;
 
     @BeforeEach
     void setUp() {
-        personagemMapper = mock(PersonagemMapper.class);
         personagemFactory = new PersonagemFactoryImpl(personagemMapper);
     }
 
     @Test
+    @DisplayName("Deve construir personagem do tipo Taijutsu")
     void deveConstruirPersonagemTaijutsu() {
-        PersonagemDTO dto = new PersonagemDTO();
+        PersonagemRequestDTO dto = new PersonagemRequestDTO();
         Personagem personagemEntity = new Personagem();
         personagemEntity.setEspecialidade(CategoriaEspecialidadeEnum.TAIJUTSU);
 
@@ -36,12 +42,13 @@ class PersonagemFactoryImplTest {
         Personagem resultado = personagemFactory.construirTipoPersonagem(dto);
 
         assertTrue(resultado instanceof NinjaDeTaijutsu);
-        verify(personagemMapper).preencherDados(any(NinjaDeTaijutsu.class), eq(personagemEntity));
+        verify(personagemMapper).toEntity(dto);
     }
 
     @Test
+    @DisplayName("Deve construir personagem do tipo Ninjutsu")
     void deveConstruirPersonagemNinjutsu() {
-        PersonagemDTO dto = new PersonagemDTO();
+        PersonagemRequestDTO dto = new PersonagemRequestDTO();
         Personagem personagemEntity = new Personagem();
         personagemEntity.setEspecialidade(CategoriaEspecialidadeEnum.NINJUTSU);
 
@@ -50,12 +57,13 @@ class PersonagemFactoryImplTest {
         Personagem resultado = personagemFactory.construirTipoPersonagem(dto);
 
         assertTrue(resultado instanceof NinjaDeNinjutsu);
-        verify(personagemMapper).preencherDados(any(NinjaDeNinjutsu.class), eq(personagemEntity));
+        verify(personagemMapper).toEntity(dto);
     }
 
     @Test
+    @DisplayName("Deve construir personagem do tipo Genjutsu")
     void deveConstruirPersonagemGenjutsu() {
-        PersonagemDTO dto = new PersonagemDTO();
+        PersonagemRequestDTO dto = new PersonagemRequestDTO();
         Personagem personagemEntity = new Personagem();
         personagemEntity.setEspecialidade(CategoriaEspecialidadeEnum.GENJUTSU);
 
@@ -64,21 +72,18 @@ class PersonagemFactoryImplTest {
         Personagem resultado = personagemFactory.construirTipoPersonagem(dto);
 
         assertTrue(resultado instanceof NinjaDeGenjutsu);
-        verify(personagemMapper).preencherDados(any(NinjaDeGenjutsu.class), eq(personagemEntity));
+        verify(personagemMapper).toEntity(dto);
     }
 
     @Test
+    @DisplayName("Deve lançar exceção quando especialidade é nula")
     void deveLancarExcecaoQuandoEspecialidadeNaoEncontrada() {
-        PersonagemDTO dto = new PersonagemDTO();
+        PersonagemRequestDTO dto = new PersonagemRequestDTO();
         Personagem personagemEntity = new Personagem();
-        personagemEntity.setEspecialidade(null); 
 
         when(personagemMapper.toEntity(dto)).thenReturn(personagemEntity);
 
-        Exception exception = assertThrows(NullPointerException.class, () -> {
-            personagemFactory.construirTipoPersonagem(dto);
-        });
-
-        assertNotNull(exception);
+        assertThrows(NullPointerException.class,
+                () -> personagemFactory.construirTipoPersonagem(dto));
     }
 }

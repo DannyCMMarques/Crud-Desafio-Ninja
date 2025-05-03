@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import com.crud.demo.Exceptions.batalhaException.BatalhaFinalizadaException;
 import com.crud.demo.Exceptions.batalhaException.BatalhaNaoEncontradaException;
 import com.crud.demo.models.Batalha;
-import com.crud.demo.models.DTO.BatalhaDTO;
-import com.crud.demo.models.DTO.BatalhaRequestDTO;
+import com.crud.demo.models.DTO.batalha.BatalhaRequestDTO;
+import com.crud.demo.models.DTO.batalha.BatalhaResponseDTO;
 import com.crud.demo.models.ParticipanteBatalha;
 import com.crud.demo.models.mappers.BatalhaMapper;
 import com.crud.demo.repositories.BatalhaRepository;
@@ -28,12 +28,11 @@ public class BatalhaServiceImpl implements BatalhaService {
     private final BatalhaMapper batalhaMapper;
 
     @Override
-    public BatalhaDTO criarBatalha(BatalhaRequestDTO request) {
-        BatalhaDTO dto = batalhaMapper.fromRequest(request, List.of());
-        Batalha batalhaEntity = batalhaMapper.toEntity(dto);
-
+    public BatalhaResponseDTO criarBatalha(BatalhaRequestDTO request) {
+        Batalha batalhaEntity = batalhaMapper.toEntity(request);
         Batalha salvo = batalhaRepository.save(batalhaEntity);
-        return batalhaMapper.toDto(salvo);
+        BatalhaResponseDTO batalhaResponseDTO = batalhaMapper.toDto(salvo);
+        return batalhaResponseDTO;
     }
 
     @Override
@@ -43,14 +42,14 @@ public class BatalhaServiceImpl implements BatalhaService {
     }
 
     @Override
-    public BatalhaDTO getBatalhaById(Long id) {
+    public BatalhaResponseDTO getBatalhaById(Long id) {
         Batalha batalhaEncontrada = batalhaRepository.findById(id).orElseThrow(BatalhaNaoEncontradaException::new);
         return batalhaMapper.toDto(batalhaEncontrada);
     }
 
     @Override
-    public BatalhaDTO atualizarBatalha(Long id, BatalhaDTO batalhaDTO) {
-        BatalhaDTO batalhaExistente = this.getBatalhaById(id);
+    public BatalhaResponseDTO atualizarBatalha(Long id, BatalhaResponseDTO batalhaDTO) {
+        BatalhaResponseDTO batalhaExistente = this.getBatalhaById(id);
         Batalha batalhaExistenteEntity = batalhaMapper.toEntity(batalhaExistente);
         List<ParticipanteBatalha> participantes = batalhaDTO.getParticipantesBatalha();
 
@@ -64,7 +63,7 @@ public class BatalhaServiceImpl implements BatalhaService {
     }
 
     @Override
-    public Page<BatalhaDTO> exibirTodasAsBatalhas(int page, int size, String sortBy, String direction) {
+    public Page<BatalhaResponseDTO> exibirTodasAsBatalhas(int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -75,7 +74,7 @@ public class BatalhaServiceImpl implements BatalhaService {
 
     @Override
     public void verificarBatalhaEncerrada(Long id) throws BatalhaFinalizadaException {
-        BatalhaDTO batalha = this.getBatalhaById(id);
+        BatalhaResponseDTO batalha = this.getBatalhaById(id);
         if (batalha.getFinalizadoEm() != null) {
             throw new BatalhaFinalizadaException();
         }

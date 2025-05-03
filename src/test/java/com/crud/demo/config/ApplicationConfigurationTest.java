@@ -32,12 +32,11 @@ class ApplicationConfigurationTest {
     @Test
     @DisplayName("Deve retornar usuário quando existir via userDetailsService")
     void deveRetornarUsuarioQuandoExistirViaUserDetailsService() {
-        Usuario user = Usuario.builder()
-                .id(5L)
-                .nome("Teste")
-                .email("teste@ex.com")
-                .senha("senha")
-                .build();
+        Usuario user = new Usuario();
+        user.setId(5L);
+        user.setNome("Teste");
+        user.setEmail("teste@ex.com");
+        user.setSenha("senha");
         when(usuarioRepository.findByEmail("teste@ex.com"))
             .thenReturn(Optional.of(user));
 

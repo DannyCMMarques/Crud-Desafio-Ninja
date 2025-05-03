@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.crud.demo.models.DTO.LoginDTO;
-import com.crud.demo.models.DTO.LoginResponseDTO;
-import com.crud.demo.services.LoginService;
+import com.crud.demo.models.DTO.login.LoginDTO;
+import com.crud.demo.models.DTO.login.LoginResponseDTO;
+import com.crud.demo.services.contratos.LoginService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

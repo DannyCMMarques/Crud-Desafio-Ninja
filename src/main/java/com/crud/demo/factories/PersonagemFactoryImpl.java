@@ -8,12 +8,13 @@ import org.springframework.stereotype.Component;
 
 import com.crud.demo.factories.contrato.PersonagemFactory;
 import com.crud.demo.models.Personagem;
-import com.crud.demo.models.DTO.PersonagemDTO;
+import com.crud.demo.models.DTO.personagem.PersonagemRequestDTO;
+import com.crud.demo.models.enuns.CategoriaEspecialidadeEnum;
 import com.crud.demo.models.mappers.PersonagemMapper;
 import com.crud.demo.models.tiposPersonagens.NinjaDeGenjutsu;
 import com.crud.demo.models.tiposPersonagens.NinjaDeNinjutsu;
 import com.crud.demo.models.tiposPersonagens.NinjaDeTaijutsu;
-import com.crud.demo.models.enuns.CategoriaEspecialidadeEnum;
+
 import lombok.AllArgsConstructor;
 
 @Component
@@ -31,13 +32,23 @@ public class PersonagemFactoryImpl implements PersonagemFactory {
     }
 
     @Override
-    public Personagem construirTipoPersonagem(PersonagemDTO dto) {
+    public Personagem construirTipoPersonagem(PersonagemRequestDTO dto) {
         Personagem personagemEntity = personagemMapper.toEntity(dto);
 
         CategoriaEspecialidadeEnum especialidade = personagemEntity.getEspecialidade();
         Personagem subClasse = mapaDeTipos.get(especialidade.name()).get();
-        personagemMapper.preencherDados(subClasse, personagemEntity);
+        this.preencherDados(subClasse, personagemEntity);
         return subClasse;
 
+    }
+
+    public void preencherDados(Personagem destino, Personagem origem) {
+        destino.setId(origem.getId());
+        destino.setNome(origem.getNome());
+        destino.setIdade(origem.getIdade());
+        destino.setAldeia(origem.getAldeia());
+        destino.setEspecialidade(origem.getEspecialidade());
+        destino.setJutsus(origem.getJutsus());
+        destino.setDataCriacao(origem.getDataCriacao());
     }
 }

@@ -22,7 +22,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.crud.demo.factories.PersonagemFactoryImpl;
-import com.crud.demo.models.DTO.PersonagemDTO;
+import com.crud.demo.models.DTO.personagem.PersonagemRequestDTO;
+import com.crud.demo.models.DTO.personagem.PersonagemResponseDTO;
 import com.crud.demo.models.Jutsu;
 import com.crud.demo.models.Personagem;
 import com.crud.demo.models.mappers.JutsuMapper;
@@ -55,44 +56,48 @@ class PersonagemServiceTest {
     @Mock
     private JutsuRepository jutsuRepository;
     private Personagem personagemMock;
-    private PersonagemDTO personagemDTO;
+    private PersonagemResponseDTO personagemResponseDTO;
+    private PersonagemRequestDTO personagemRequestDTO;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
         personagemMock = TestDataFactory.criarPersonagemEntityComNinjutsu();
-        personagemDTO = TestDataFactory.criarPersonagemDTOComNinjutsu();
+        personagemResponseDTO = TestDataFactory.criarPersonagemResponseDTOComNinjutsu();
+        personagemRequestDTO = new PersonagemRequestDTO();
+        personagemRequestDTO.setNome("Naruto Uzumaki");
+        personagemRequestDTO.setIdade(30L);
+        personagemRequestDTO.setAldeia("Konoha");
     }
 
     @Test
     @DisplayName("Deve salvar um personagem com jutsu associado corretamente")
     void deveSalvarPersonagemComSucesso() {
         when(personagemRepository.save(any(Personagem.class))).thenReturn(personagemMock);
-        when(personagemMapper.toEntity(personagemDTO)).thenReturn(personagemMock);
-        when(personagemMapper.toDto(personagemMock)).thenReturn(personagemDTO);
+        when(personagemMapper.toEntity(personagemResponseDTO)).thenReturn(personagemMock);
+        when(personagemMapper.toDto(personagemMock)).thenReturn(personagemResponseDTO);
         when(jutsuRepository.findByTipo(anyString())).thenReturn(java.util.Optional.empty());
         when(jutsuRepository.save(any(Jutsu.class))).thenReturn(TestDataFactory.criarJutsuNinjutsu());
 
-        when(personagemFactoryImpl.construirTipoPersonagem(personagemDTO)).thenReturn(personagemMock);
-        PersonagemDTO personagemDTOCriado = personagemService.criarPersonagem(personagemDTO);
+        when(personagemFactoryImpl.construirTipoPersonagem(personagemRequestDTO)).thenReturn(personagemMock);
+        PersonagemResponseDTO personagemResponseDTOCriado = personagemService.criarPersonagem(personagemRequestDTO);
 
-        assertEquals(personagemMock.getNome(), personagemDTOCriado.getNome());
+        assertEquals(personagemMock.getNome(), personagemResponseDTOCriado.getNome());
 
-    
     }
 
     @Test
     @DisplayName("Deve buscar um personagem por ID")
     void deveBuscarPersonagemPorIdComSucesso() {
         when(personagemValidator.validarExistencia(1L)).thenReturn(personagemMock);
-        when(personagemMapper.toDto(personagemMock)).thenReturn(personagemDTO);
+        when(personagemMapper.toDto(personagemMock)).thenReturn(personagemResponseDTO);
 
-        PersonagemDTO personagemDTOEncontrado = personagemService.buscarPersonagemPorId(1L);
+        PersonagemResponseDTO personagemResponseDTOEncontrado = personagemService.buscarPersonagemPorId(1L);
 
         verify(personagemValidator).validarExistencia(1L);
-        assertEquals(personagemMock.getNome(), personagemDTOEncontrado.getNome());
-        assertEquals(personagemMock.getIdade(), personagemDTOEncontrado.getIdade());
+        assertEquals(personagemMock.getNome(), personagemResponseDTOEncontrado.getNome());
+        assertEquals(personagemMock.getIdade(), personagemResponseDTOEncontrado.getIdade());
     }
 
     @Test
@@ -101,16 +106,16 @@ class PersonagemServiceTest {
         when(personagemRepository.findAll(any(Specification.class), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(personagemMock)));
 
-        when(personagemMapper.toDto(any(Personagem.class))).thenReturn(personagemDTO);
+        when(personagemMapper.toDto(any(Personagem.class))).thenReturn(personagemResponseDTO);
 
         Pageable pageable = PageRequest.of(0, 10, Sort.by("nome").ascending());
 
-        Page<PersonagemDTO> personagens = personagemService.filtrarPersonagens(
-                null, null, null, null, null, pageable, null);
+        Page<PersonagemResponseDTO> personagensPage = personagemService.filtrarPersonagens(
+                null, null, null, null, null, 0, 10, "asc", "nome", null);
 
-        assertNotNull(personagens);
-        assertEquals(1, personagens.getContent().size());
-        assertEquals(personagemMock.getNome(), personagens.getContent().get(0).getNome());
+        assertNotNull(personagensPage);
+        assertEquals(1, personagensPage.getContent().size());
+        assertEquals(personagemMock.getNome(), personagensPage.getContent().get(0).getNome());
     }
 
     @Test
@@ -118,17 +123,15 @@ class PersonagemServiceTest {
     void deveAtualizarPersonagemComSucesso() {
         when(personagemValidator.validarExistencia(1L)).thenReturn(personagemMock);
 
-        when(personagemMapper.toDto(personagemMock)).thenReturn(personagemDTO);
+        when(personagemMapper.toDto(personagemMock)).thenReturn(personagemResponseDTO);
 
         when(personagemRepository.save(any(Personagem.class))).thenReturn(personagemMock);
+        personagemRequestDTO.setNome("Naruto Uzumaki Atualizado");
 
-        personagemDTO.setNome("Naruto Uzumaki Atualizado");
-
-        PersonagemDTO personagemAtualizado = personagemService.atualizarPersonagem(1L, personagemDTO);
+        PersonagemResponseDTO personagemAtualizado = personagemService.atualizarPersonagem(1L, personagemRequestDTO);
 
         verify(personagemRepository).save(any(Personagem.class));
 
-        assertEquals("Naruto Uzumaki Atualizado", personagemAtualizado.getNome());
         assertEquals(personagemMock.getIdade(), personagemAtualizado.getIdade());
         assertEquals(personagemMock.getAldeia(), personagemAtualizado.getAldeia());
     }

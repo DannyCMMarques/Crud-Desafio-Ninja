@@ -3,7 +3,7 @@ package com.crud.demo.websocket.notificacoes;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
-import com.crud.demo.models.DTO.AlertaDTO;
+import com.crud.demo.models.DTO.websocket.AlertaDTO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

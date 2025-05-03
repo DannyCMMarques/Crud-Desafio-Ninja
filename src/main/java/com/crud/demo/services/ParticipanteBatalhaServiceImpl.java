@@ -5,16 +5,19 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.crud.demo.models.Batalha;
 import com.crud.demo.models.ParticipanteBatalha;
 import com.crud.demo.models.Personagem;
 import com.crud.demo.models.Usuario;
-import com.crud.demo.models.DTO.BatalhaDTO;
-import com.crud.demo.models.DTO.ParticipanteBatalhaDTO;
-import com.crud.demo.models.DTO.PersonagemDTO;
+import com.crud.demo.models.DTO.batalha.BatalhaResponseDTO;
+import com.crud.demo.models.DTO.participanteBatalha.ParticipanteBatalhaRequestDTO;
+import com.crud.demo.models.DTO.participanteBatalha.ParticipanteBatalhaResponseDTO;
+import com.crud.demo.models.DTO.personagem.PersonagemResponseDTO;
 import com.crud.demo.models.mappers.BatalhaMapper;
 import com.crud.demo.models.mappers.ParticipanteBatalhaMapper;
 import com.crud.demo.models.mappers.PersonagemMapper;
@@ -39,12 +42,14 @@ public class ParticipanteBatalhaServiceImpl implements ParticipanteBatalhaServic
     private final BatalhaMapper batalhaMapper;
 
     @Override
-    public ParticipanteBatalhaDTO criarParticipanteBatalha(ParticipanteBatalhaDTO dto) {
+    public ParticipanteBatalhaResponseDTO criarParticipanteBatalha(ParticipanteBatalhaRequestDTO dto) {
         Usuario usuario = usuarioValidator.validarExistencia(dto.getNomeUsuario());
 
-        ParticipanteBatalha participanteEntity = participanteBatMapper.toEntity(dto, usuario);
+        ParticipanteBatalha participanteEntity = participanteBatMapper.toEntity(dto);
         ParticipanteBatalha salvo = participanteBatalhaRepository.save(participanteEntity);
-        return participanteBatMapper.toDto(salvo);
+        ParticipanteBatalhaResponseDTO participanteBatalhaResponseDTO = participanteBatMapper.toDto(salvo);
+
+        return participanteBatalhaResponseDTO;
     }
 
     @Override
@@ -54,8 +59,8 @@ public class ParticipanteBatalhaServiceImpl implements ParticipanteBatalhaServic
     }
 
     @Override
-    public List<PersonagemDTO> getPersonagemByBatalhaId(Long id) {
-        BatalhaDTO batalha = batalhaService.getBatalhaById(id);
+    public List<PersonagemResponseDTO> getPersonagemByBatalhaId(Long id) {
+        BatalhaResponseDTO batalha = batalhaService.getBatalhaById(id);
         Batalha batalhaEntity = batalhaMapper.toEntity(batalha);
         Optional<List<ParticipanteBatalha>> participantesIdBatalhas = participanteBatalhaRepository
                 .findByBatalha(batalhaEntity);
@@ -70,25 +75,31 @@ public class ParticipanteBatalhaServiceImpl implements ParticipanteBatalhaServic
     }
 
     @Override
-    public ParticipanteBatalhaDTO getParticipanteBatalhaById(Long id) {
+    public ParticipanteBatalhaResponseDTO getParticipanteBatalhaById(Long id) {
         ParticipanteBatalha participanteBatalha = participanteBatalhaValidator.verificarParticipanteBatalhaDTO(id);
         return participanteBatMapper.toDto(participanteBatalha);
     }
 
     @Override
-    public ParticipanteBatalhaDTO atualizarParticipanteBatalha(Long id, ParticipanteBatalhaDTO participanteBDTO) {
-        ParticipanteBatalha participanteBatalhaEncontrado = participanteBatalhaValidator
-                .verificarParticipanteBatalhaDTO(id);
+    public ParticipanteBatalhaResponseDTO atualizarParticipanteBatalha(Long id,
+            ParticipanteBatalhaRequestDTO participanteBDTO) {
+        ParticipanteBatalhaResponseDTO participanteBatalhaExistente = this.getParticipanteBatalhaById(id);
+        ParticipanteBatalha participanteBatalha = participanteBatMapper.toEntity(participanteBatalhaExistente);
 
-        participanteBatalhaEncontrado.setPlayerOrder(participanteBDTO.getPlayerOrder());
-        participanteBatalhaEncontrado.setVencedor(participanteBDTO.getVencedor());
+        participanteBatalha.setPlayerOrder(participanteBDTO.getPlayerOrder());
+        participanteBatalha.setVencedor(participanteBDTO.getVencedor());
 
-        ParticipanteBatalha participanteAtualizado = participanteBatalhaRepository.save(participanteBatalhaEncontrado);
+        ParticipanteBatalha participanteAtualizado = participanteBatalhaRepository.save(participanteBatalha);
+
         return participanteBatMapper.toDto(participanteAtualizado);
     }
 
     @Override
-    public Page<ParticipanteBatalhaDTO> listarTodosParticipantes(Pageable pageable) {
+    public Page<ParticipanteBatalhaResponseDTO> listarTodosParticipantes(String direction, String sortBy, int page,
+            int size) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
         Page<ParticipanteBatalha> participantesBatalhas = participanteBatalhaRepository.findAll(pageable);
         return participantesBatalhas.map(participanteBatMapper::toDto);
     }

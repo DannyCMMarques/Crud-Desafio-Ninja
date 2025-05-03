@@ -1,8 +1,8 @@
 package com.crud.demo.utils;
 
+import com.crud.demo.models.DTO.personagem.PersonagemResponseDTO;
 import com.crud.demo.models.Jutsu;
 import com.crud.demo.models.Personagem;
-import com.crud.demo.models.DTO.PersonagemDTO;
 
 public class TestDataFactory {
 
@@ -14,29 +14,31 @@ public class TestDataFactory {
     public static final String TAIJUTSU = "Taijutsu";
     public static final String GENJUTSU = "Genjutsu";
 
-    public static PersonagemDTO criarPersonagemDTOComNinjutsu() {
-        PersonagemDTO dto = new PersonagemDTO();
-        dto.setNome(NOME_PADRAO);
-        dto.setAldeia(ALDEIA);
-        dto.setIdade(IDADE);
+    public static PersonagemResponseDTO criarPersonagemResponseDTOComNinjutsu() {
+        return PersonagemResponseDTO.builder()
+            .nome(NOME_PADRAO)
+            .aldeia(ALDEIA)
+            .idade(IDADE)
+            .build();
+    }
+
+    public static PersonagemResponseDTO criarPersonagemResponseDTOComTaijutsu() {
+        return PersonagemResponseDTO.builder()
+            .nome("Rock Lee")
+            .aldeia(ALDEIA)
+            .idade(25L)
+            .build();
+    }
+
+    public static PersonagemResponseDTO criarPersonagemResponseDTOComGenjutsu() {
+        PersonagemResponseDTO dto = PersonagemResponseDTO.builder()
+            .nome("Itachi Uchiha")
+            .aldeia(ALDEIA)
+            .idade(28L)
+            .build();
         return dto;
     }
 
-    public static PersonagemDTO criarPersonagemDTOComTaijutsu() {
-        PersonagemDTO dto = new PersonagemDTO();
-        dto.setNome("Rock Lee");
-        dto.setAldeia(ALDEIA);
-        dto.setIdade(25L);
-        return dto;
-    }
-
-    public static PersonagemDTO criarPersonagemDTOComGenjutsu() {
-        PersonagemDTO dto = new PersonagemDTO();
-        dto.setNome("Itachi Uchiha");
-        dto.setAldeia(ALDEIA);
-        dto.setIdade(28L);
-        return dto;
-    }
 
     public static Jutsu criarJutsuNinjutsu() {
         return Jutsu.builder().id(1L).tipo(NINJUTSU).build();

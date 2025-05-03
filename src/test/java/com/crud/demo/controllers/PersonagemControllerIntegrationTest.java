@@ -1,39 +1,34 @@
 package com.crud.demo.controllers;
 
-import java.io.IOException;
-import java.util.Collections;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doAnswer;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.hasSize;
+import java.io.IOException;
+import java.util.List;
+
+import org.springframework.data.domain.PageImpl;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.nullable;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.crud.demo.models.DTO.PersonagemDTO;
+import com.crud.demo.models.DTO.personagem.PersonagemRequestDTO;
 import com.crud.demo.models.Personagem;
-import com.crud.demo.models.enuns.CategoriaEspecialidadeEnum;
+import com.crud.demo.models.DTO.personagem.PersonagemResponseDTO;
 import com.crud.demo.models.mappers.PersonagemMapper;
 import com.crud.demo.security.JwtAuthenticationFilter;
 import com.crud.demo.services.PersonagemServiceImpl;
@@ -44,7 +39,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebMvcTest(controllers = PersonagemControllador.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(controllers = PersonagemController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 public class PersonagemControllerIntegrationTest {
@@ -64,7 +59,9 @@ public class PersonagemControllerIntegrationTest {
         @MockBean
         private PersonagemMapper personagemMapper;
 
-        private PersonagemDTO personagemDTO;
+        private PersonagemResponseDTO personagemResponseDTO;
+        private PersonagemRequestDTO personagemRequestDTO;
+        private Personagem personagem;
 
         @BeforeEach
         void setup() throws ServletException, IOException {
@@ -76,31 +73,40 @@ public class PersonagemControllerIntegrationTest {
                         return null;
                 }).when(jwtAuthenticationFilter).doFilterInternal(any(), any(), any());
 
-                personagemDTO = new PersonagemDTO();
-                personagemDTO.setId(1L);
-                personagemDTO.setNome("Naruto");
-                personagemDTO.setIdade(33L);
-                personagemDTO.setAldeia("Konoha");
+                personagemResponseDTO = PersonagemResponseDTO.builder()
+                                .id(1L)
+                                .nome("Naruto")
+                                .idade(33L)
+                                .aldeia("Konoha")
+                                .build();
 
-                when(personagemMapper.toEntity(any(PersonagemDTO.class)))
+                personagemRequestDTO = new PersonagemRequestDTO();
+                personagemRequestDTO.setNome("Naruto");
+                personagemRequestDTO.setIdade(33L);
+                personagemRequestDTO.setAldeia("Konoha");
+                personagem = new Personagem();
+                when(personagemMapper.toEntity(personagemResponseDTO))
                                 .thenReturn(new Personagem());
-                when(personagemMapper.toDto(any(Personagem.class)))
-                                .thenReturn(personagemDTO);
+                when(personagemMapper.toDto(personagem))
+                                .thenReturn(personagemResponseDTO);
+                when(personagemService.filtrarPersonagens(null, null, null, null, null, 0, 10, "asc", "nome", null))
+                                .thenReturn(new PageImpl<>(List.of(personagemResponseDTO)));
+
         }
 
         @Test
         @DisplayName("Deve criar personagem e retornar 201 com header Location")
         @WithMockUser(roles = "USER")
         void deveCriarPersonagem() throws Exception {
-                when(personagemService.criarPersonagem(any(PersonagemDTO.class)))
-                                .thenReturn(personagemDTO);
+                when(personagemService.criarPersonagem(personagemRequestDTO))
+                                .thenReturn(personagemResponseDTO);
 
                 mockMvc.perform(post("/api/v1/personagens")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(personagemDTO)))
+                                .content(objectMapper.writeValueAsString(personagemRequestDTO)))
                                 .andExpect(status().isCreated())
-                                .andExpect(header().string(
-                                                HttpHeaders.LOCATION,
+
+                                .andExpect(header().string(HttpHeaders.LOCATION,
                                                 endsWith("/api/v1/personagens/1")));
         }
 
@@ -109,7 +115,7 @@ public class PersonagemControllerIntegrationTest {
         @WithMockUser(roles = "USER")
         void deveBuscarPersonagemPorId() throws Exception {
                 when(personagemService.buscarPersonagemPorId(1L))
-                                .thenReturn(personagemDTO);
+                                .thenReturn(personagemResponseDTO);
 
                 mockMvc.perform(get("/api/v1/personagens/{id}", 1L))
                                 .andExpect(status().isOk())
@@ -127,17 +133,6 @@ public class PersonagemControllerIntegrationTest {
         @DisplayName("Deve listar todos os personagens e retornar lista com sucesso")
         @WithMockUser(roles = "USER")
         void deveListarTodosOsPersonagens() throws Exception {
-
-                Page<PersonagemDTO> page = new PageImpl<>(Collections.singletonList(personagemDTO));
-
-                when(personagemService.filtrarPersonagens(
-                                nullable(String.class),
-                                nullable(Long.class),
-                                nullable(Long.class),
-                                nullable(Long.class),
-                                nullable(String.class),
-                                any(Pageable.class),
-                                nullable(CategoriaEspecialidadeEnum.class))).thenReturn(page);
 
                 mockMvc.perform(get("/api/v1/personagens")
                                 .accept(MediaType.APPLICATION_JSON))

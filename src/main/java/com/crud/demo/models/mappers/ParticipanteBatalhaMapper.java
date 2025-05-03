@@ -1,52 +1,39 @@
 package com.crud.demo.models.mappers;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-import com.crud.demo.models.Batalha;
 import com.crud.demo.models.ParticipanteBatalha;
-import com.crud.demo.models.Personagem;
-import com.crud.demo.models.Usuario;
-import com.crud.demo.models.DTO.ParticipanteBatalhaDTO;
-import com.crud.demo.validators.BatalhaValidators;
-import com.crud.demo.validators.PersonagemValidator;
+import com.crud.demo.models.DTO.participanteBatalha.ParticipanteBatalhaRequestDTO;
+import com.crud.demo.models.DTO.participanteBatalha.ParticipanteBatalhaResponseDTO;
+import com.crud.demo.models.mappers.helpers.ParticipanteBatalhaResolver;
 
-import lombok.Builder;
-import lombok.RequiredArgsConstructor;
+@Mapper(componentModel = "spring", uses = ParticipanteBatalhaResolver.class)
+public interface ParticipanteBatalhaMapper {
 
-@Component
-@RequiredArgsConstructor
-@Builder
-public class ParticipanteBatalhaMapper {
+    @Mapping(source = "batalha.id", target = "batalha")
+    @Mapping(source = "usuario.nome", target = "nomeUsuario")
+    @Mapping(source = "personagem.nome", target = "personagem")
+    @Mapping(source = "playerOrder", target = "playerOrder")
+    @Mapping(source = "vencedor", target = "vencedor")
+    ParticipanteBatalhaResponseDTO toDto(ParticipanteBatalha participante);
 
-  private final PersonagemValidator personagemValidator;
-  private final BatalhaValidators batalhaValidators;
-    public ParticipanteBatalhaDTO toDto(ParticipanteBatalha participante) {
-        if (participante == null)
-            return null;
 
-        return ParticipanteBatalhaDTO.builder()
-                .id(participante.getId())
-                .batalha(participante.getBatalha().getId()) 
-                .nomeUsuario(participante.getUsuario().getNome()) 
-                .personagem(participante.getPersonagem().getNome()) 
-                .playerOrder(participante.getPlayerOrder())
-                .vencedor(participante.getVencedor())
-                .build();
-    }
 
-    public ParticipanteBatalha toEntity(ParticipanteBatalhaDTO dto, Usuario usuario) {
-        if (dto == null)
-            return null;
-            Long idBatalha= dto.getBatalha();
-      Batalha batalha = batalhaValidators.validarExistencia(idBatalha);
-      Personagem personagem = personagemValidator.validarExistencia(dto.getPersonagem()); 
-      return ParticipanteBatalha.builder()
-                .id(dto.getId())
-                .batalha(batalha)
-                .usuario(usuario)
-                .personagem(personagem) 
-                .playerOrder(dto.getPlayerOrder())
-                .vencedor(dto.getVencedor())
-                .build();
-    }
+    @Mapping(target = "id",             ignore = true)
+    @Mapping(source = "batalha", target = "batalha", qualifiedByName = "mapBatalhaById")
+    @Mapping(source = "nomeUsuario", target = "usuario", qualifiedByName = "mapUsuarioByNome")
+    @Mapping(source = "personagem", target = "personagem", qualifiedByName = "mapPersonagemByNome")
+    @Mapping(source = "playerOrder", target = "playerOrder")
+    @Mapping(source = "vencedor", target = "vencedor")
+    ParticipanteBatalha toEntity(ParticipanteBatalhaRequestDTO dto);
+
+    
+     @Mapping(source = "id",             target = "id")
+     @Mapping(source = "batalha",        target = "batalha",    qualifiedByName = "mapBatalhaById")
+     @Mapping(source = "nomeUsuario",    target = "usuario",    qualifiedByName = "mapUsuarioByNome")
+     @Mapping(source = "personagem",     target = "personagem", qualifiedByName = "mapPersonagemByNome")
+     @Mapping(source = "playerOrder",    target = "playerOrder")
+     @Mapping(source = "vencedor",       target = "vencedor")
+     ParticipanteBatalha toEntity(ParticipanteBatalhaResponseDTO dto);
 }

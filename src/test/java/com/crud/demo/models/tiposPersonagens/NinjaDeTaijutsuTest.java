@@ -1,14 +1,13 @@
 package com.crud.demo.models.tiposPersonagens;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.crud.demo.events.EstatisticaDoJogadorEvent;
 import com.crud.demo.models.Personagem;
-import com.crud.demo.models.DTO.JutsuDTO;
+import com.crud.demo.models.DTO.jutsu.JutsuResponseDTO;
 
 class NinjaDeTaijutsuTest {
 
@@ -23,10 +22,10 @@ class NinjaDeTaijutsuTest {
     @Test
     @DisplayName("Deve usar jutsu corretamente como ninja de Taijutsu")
     void deveUsarJutsu() {
-        JutsuDTO jutsu = new JutsuDTO();
-        jutsu.setTipo("Lótus Primária");
-        jutsu.setDano(80);
-
+        JutsuResponseDTO jutsu = JutsuResponseDTO.builder()
+            .tipo("Lótus Primária")
+            .dano(80)
+            .build();
         Personagem alvo = new Personagem();
         alvo.setNome("Gaara");
 

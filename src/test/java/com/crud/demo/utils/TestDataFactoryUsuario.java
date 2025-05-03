@@ -1,8 +1,8 @@
 package com.crud.demo.utils;
 
 
+import com.crud.demo.models.DTO.usuario.UsuarioRequestDTO;
 import com.crud.demo.models.Usuario;
-import com.crud.demo.models.DTO.RegistroUsuarioDTO;
 
 public class TestDataFactoryUsuario {
 
@@ -12,11 +12,8 @@ public class TestDataFactoryUsuario {
     public static final Long ID_PADRAO = 1L;
 public static final String TOKEN="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsImNyZWF0ZWRfYXQiOjE3NDUyMTIxODY3NTYsInN1YiI6ImpvYW8uc2lsdmFAZXhhbXBsZS5jb20iLCJpYXQiOjE3NDUyMTIxODYsImV4cCI6MTc0NTI5ODU4Nn0.uX45hyt0F59eFol0CkPpcf9ZWqAnWpyHkZPqPTpo4CU";
 
-    public static RegistroUsuarioDTO criarUsuarioDTO() {
-        RegistroUsuarioDTO dto = new RegistroUsuarioDTO();
-        dto.setNome(NOME_PADRAO);
-        dto.setEmail(EMAIL_PADRAO);
-        dto.setSenha(SENHA_PADRAO);
+    public static UsuarioRequestDTO criarUsuarioDTO() {
+        UsuarioRequestDTO dto = new UsuarioRequestDTO(NOME_PADRAO, EMAIL_PADRAO, SENHA_PADRAO);
         return dto;
     }
 

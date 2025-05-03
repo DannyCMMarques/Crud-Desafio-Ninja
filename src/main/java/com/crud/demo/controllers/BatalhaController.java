@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.crud.demo.models.DTO.BatalhaDTO;
-import com.crud.demo.models.DTO.BatalhaRequestDTO;
-import com.crud.demo.services.BatalhaServiceImpl;
+import com.crud.demo.models.DTO.batalha.BatalhaRequestDTO;
+import com.crud.demo.models.DTO.batalha.BatalhaResponseDTO;
+import com.crud.demo.services.contratos.BatalhaService;
 import com.crud.demo.utils.UriLocationUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class BatalhaController {
         private static final Logger log = LoggerFactory.getLogger(BatalhaController.class);
 
-        private final BatalhaServiceImpl batalhaService;
+        private final BatalhaService batalhaService;
 
         @PostMapping
         @Operation(summary = "Cadastrar uma Batalha")
@@ -45,8 +45,8 @@ public class BatalhaController {
                         @ApiResponse(responseCode = "400", description = "Dados inválidos")
         })
 
-        public ResponseEntity<BatalhaDTO> cadastrarBatalha(@Valid @RequestBody BatalhaRequestDTO request) {
-                BatalhaDTO batalhaCriada = batalhaService.criarBatalha(request);
+        public ResponseEntity<BatalhaResponseDTO> cadastrarBatalha(@Valid @RequestBody BatalhaRequestDTO request) {
+                BatalhaResponseDTO batalhaCriada = batalhaService.criarBatalha(request);
                 log.info("Batalha criada com sucesso, id={}", batalhaCriada.getId());
 
                 URI location = UriLocationUtils
@@ -73,9 +73,9 @@ public class BatalhaController {
                         @ApiResponse(responseCode = "400", description = "Dados inválidos"),
                         @ApiResponse(responseCode = "404", description = "Batalha não encontrado")
         })
-        public ResponseEntity<BatalhaDTO> atualizar(@PathVariable long id, @Valid @RequestBody BatalhaDTO dto) {
+        public ResponseEntity<BatalhaResponseDTO> atualizar(@PathVariable long id, @Valid @RequestBody BatalhaResponseDTO dto) {
                 log.info("Requisição de UPDATE para batalha id={}, dados={}", id, dto);
-                BatalhaDTO atualizado = batalhaService.atualizarBatalha(id, dto);
+                BatalhaResponseDTO atualizado = batalhaService.atualizarBatalha(id, dto);
                 return ResponseEntity.ok(atualizado);
         }
 
@@ -85,9 +85,9 @@ public class BatalhaController {
                         @ApiResponse(responseCode = "200", description = "Batalha encontrado com sucesso"),
                         @ApiResponse(responseCode = "404", description = "Batalha não encontrado")
         })
-        public ResponseEntity<BatalhaDTO> buscarPorId(@PathVariable long id) {
+        public ResponseEntity<BatalhaResponseDTO> buscarPorId(@PathVariable long id) {
                 log.info("Requisição de GET por id={}", id);
-                BatalhaDTO batalha = batalhaService.getBatalhaById(id);
+                BatalhaResponseDTO batalha = batalhaService.getBatalhaById(id);
                 return ResponseEntity.ok(batalha);
         }
 
@@ -97,13 +97,13 @@ public class BatalhaController {
                         @ApiResponse(responseCode = "200", description = "Lista de batalhas retornada com sucesso"),
                         @ApiResponse(responseCode = "400", description = "Requisição inválida")
         })
-        public ResponseEntity<Page<BatalhaDTO>> exibirBatalhas(
+        public ResponseEntity<Page<BatalhaResponseDTO>> exibirBatalhas(
                         @Parameter(description = "Número da página") @RequestParam(defaultValue = "0") int page,
                         @Parameter(description = "Tamanho da página") @RequestParam(defaultValue = "10") int size,
                         @Parameter(description = "Campo para ordenar") @RequestParam(defaultValue = "nome") String sortBy,
                         @Parameter(description = "Direção da ordenação (asc ou desc)") @RequestParam(defaultValue = "asc") String direction) {
 
-                Page<BatalhaDTO> batalhas = batalhaService.exibirTodasAsBatalhas(page, size, sortBy, direction);
+                Page<BatalhaResponseDTO> batalhas = batalhaService.exibirTodasAsBatalhas(page, size, sortBy, direction);
                 log.debug("Total de batalhas encontrados: {}", batalhas.getTotalElements());
                 return ResponseEntity.ok(batalhas);
 

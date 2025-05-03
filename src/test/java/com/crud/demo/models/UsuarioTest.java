@@ -14,14 +14,13 @@ class UsuarioTest {
     @DisplayName("Deve preencher todos os campos corretamente usando o builder")
     void devePreencherTodosOsCamposCorretamenteUsandoBuilder() {
         Date now = new Date();
-        Usuario u = Usuario.builder()
-                .id(1L)
-                .nome("Teste")
-                .email("teste@example.com")
-                .senha("segredo")
-                .createdAt(now)
-                .updatedAt(now)
-                .build();
+        Usuario u = new Usuario();
+        u.setId(1L);
+        u.setNome("Teste");
+        u.setEmail("teste@example.com");
+        u.setSenha("segredo");
+        u.setCreatedAt(now);
+        u.setUpdatedAt(now);
 
         assertEquals(1L, u.getId());
         assertEquals("Teste", u.getNome());

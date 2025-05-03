@@ -1,49 +1,49 @@
 package com.crud.demo.models.mappers;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 import com.crud.demo.models.Jutsu;
-import com.crud.demo.models.DTO.JutsuDTO;
+import com.crud.demo.models.DTO.jutsu.JutsuRequestDTO;
+import com.crud.demo.models.DTO.jutsu.JutsuResponseDTO;
 
-@Component
-public class JutsuMapper {
+@Mapper(componentModel = "spring")
+public interface JutsuMapper {
 
-    public JutsuDTO toDto(Jutsu jutsu) {
-        return JutsuDTO.builder()
-                .id(jutsu.getId())
-                .tipo(jutsu.getTipo())
-                .dano(jutsu.getDano())
-                .consumo_de_chakra(jutsu.getConsumo_de_chakra())
-                .categoria(jutsu.getCategoria())
-                .build();
-    }
+        @Mapping(source = "id", target = "id")
+        JutsuResponseDTO toDto(Jutsu jutsu);
 
-    public Jutsu toEntity(JutsuDTO dto) {
-        return Jutsu.builder()
-                .id(dto.getId())
-                .tipo(dto.getTipo())
-                .dano(dto.getDano())
-                .consumo_de_chakra(dto.getConsumo_de_chakra())
-                .categoria(dto.getCategoria())
-                .build();
-    }
+        @Mapping(source = "id", target = "id")
+        Jutsu toEntity(JutsuResponseDTO dto);
 
-    public Map<String, JutsuDTO> toDtoMap(Map<String, Jutsu> jutsus) {
-        return jutsus.entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> toDto(entry.getValue())
-                ));
-    }
+        @Mapping(target = "id", ignore = true)
+        Jutsu toEntity(JutsuRequestDTO dto);
 
-    public Map<String, Jutsu> toEntityMap(Map<String, JutsuDTO> dtos) {
-        return dtos.entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> toEntity(entry.getValue())
-                ));
-    }
+        @Named("mapToDto")
+        default Map<String, JutsuResponseDTO> mapToDto(Map<String, Jutsu> jutsus) {
+                if (jutsus == null)
+                        return Collections.emptyMap();
+
+                return jutsus.entrySet().stream()
+                                .collect(Collectors.toMap(
+                                                Map.Entry::getKey,
+                                                entry -> toDto(entry.getValue())));
+        }
+
+        @Named("mapToEntity")
+        default Map<String, Jutsu> mapToEntity(Map<String, JutsuResponseDTO> dtoMap) {
+                if (dtoMap == null)
+                        return Collections.emptyMap();
+
+                return dtoMap.entrySet().stream()
+                                .collect(Collectors.toMap(
+                                                Map.Entry::getKey,
+                                                entry -> toEntity(entry.getValue())));
+        }
+
 }

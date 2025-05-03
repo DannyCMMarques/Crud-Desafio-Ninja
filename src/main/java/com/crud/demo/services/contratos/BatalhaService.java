@@ -2,20 +2,20 @@ package com.crud.demo.services.contratos;
 
 import org.springframework.data.domain.Page;
 
-import com.crud.demo.models.DTO.BatalhaDTO;
-import com.crud.demo.models.DTO.BatalhaRequestDTO;
+import com.crud.demo.models.DTO.batalha.BatalhaResponseDTO;
+import com.crud.demo.models.DTO.batalha.BatalhaRequestDTO;
 
 public interface BatalhaService {
 
-    BatalhaDTO criarBatalha(BatalhaRequestDTO dto);
+    BatalhaResponseDTO criarBatalha(BatalhaRequestDTO dto);
 
     void deletarBatalha(Long id);
 
-    BatalhaDTO getBatalhaById(Long id);
+    BatalhaResponseDTO getBatalhaById(Long id);
 
-    BatalhaDTO atualizarBatalha(Long id, BatalhaDTO batalhaDTO);
+    BatalhaResponseDTO atualizarBatalha(Long id, BatalhaResponseDTO batalhaDTO);
 
-    Page<BatalhaDTO> exibirTodasAsBatalhas(int page, int size, String sortBy, String direction);
+    Page<BatalhaResponseDTO> exibirTodasAsBatalhas(int page, int size, String sortBy, String direction);
 
     void verificarBatalhaEncerrada(Long id);
 

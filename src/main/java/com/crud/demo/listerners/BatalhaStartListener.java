@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import com.crud.demo.events.BatalhaStartEvent;
 import com.crud.demo.events.EstatisticaDoJogadorEvent;
 import com.crud.demo.models.Batalha;
-import com.crud.demo.models.DTO.PersonagemDTO;
+import com.crud.demo.models.DTO.personagem.PersonagemResponseDTO;
 import com.crud.demo.models.mappers.PersonagemMapper;
 import com.crud.demo.repositories.JutsuRepository;
 import com.crud.demo.services.EstatisticasDoJogadorStore;
@@ -47,17 +47,17 @@ public class BatalhaStartListener {
         log.debug("batalha adicionada com sucesso {}", batalha.getId());
         batalha.setCriadoEm(LocalDateTime.now());
         log.debug("Novo horário de criação adicionado com sucesso");
-        List<PersonagemDTO> personagensDTO = participanteBatalhaService.getPersonagemByBatalhaId(idBatalha);
+        List<PersonagemResponseDTO> personagensDTO = participanteBatalhaService.getPersonagemByBatalhaId(idBatalha);
 
         log.debug("Personagens para batalha {}: {}", idBatalha, personagensDTO);
 
         List<EstatisticaDoJogadorEvent> estatisticasIniciais = personagensDTO.stream()
-                .map(personagemDTO -> new EstatisticaDoJogadorEvent(
-                personagemMapper.toEntity(personagemDTO),
+                .map(PersonagemRequestDTO -> new EstatisticaDoJogadorEvent(
+                personagemMapper.toEntity(PersonagemRequestDTO),
                 new HashMap<>(),
                 100,
                 5.00,
-                jutsuRepository.findMapByCategoria(personagemDTO.getEspecialidade())))
+                jutsuRepository.findMapByCategoria(PersonagemRequestDTO.getEspecialidade())))
                 .collect(Collectors.toList());
         log.info("Estatísticas iniciais para batalha {}: count={} ", idBatalha, estatisticasIniciais.size());
 
