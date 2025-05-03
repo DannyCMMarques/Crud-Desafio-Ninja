@@ -2,16 +2,19 @@ package com.crud.demo.services;
 
 import java.util.Map;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.crud.demo.factories.PersonagemFactoryImpl;
+import com.crud.demo.models.DTO.personagem.PersonagemRequestDTO;
 import com.crud.demo.models.Jutsu;
 import com.crud.demo.models.Personagem;
-import com.crud.demo.models.DTO.PersonagemDTO;
+import com.crud.demo.models.DTO.personagem.PersonagemResponseDTO;
 import com.crud.demo.models.enuns.CategoriaEspecialidadeEnum;
 import com.crud.demo.models.mappers.PersonagemMapper;
 import com.crud.demo.repositories.JutsuRepository;
@@ -35,7 +38,7 @@ public class PersonagemServiceImpl implements PersonagemService {
 
         @Override
         @Transactional
-        public PersonagemDTO criarPersonagem(PersonagemDTO dto) {
+        public PersonagemResponseDTO criarPersonagem(PersonagemRequestDTO dto) {
                 personagemValidator.validarCadastro(dto.getNome());
 
                 Map<String, Jutsu> jutsusPersonagem = jutsuRepository.findMapByCategoria(dto.getEspecialidade());
@@ -48,7 +51,7 @@ public class PersonagemServiceImpl implements PersonagemService {
         }
 
         @Override
-        public PersonagemDTO buscarPersonagemPorId(Long id) {
+        public PersonagemResponseDTO buscarPersonagemPorId(Long id) {
                 Personagem personagem = personagemValidator.validarExistencia(id);
                 return personagemMapper.toDto(personagem);
         }
@@ -61,7 +64,7 @@ public class PersonagemServiceImpl implements PersonagemService {
 
         @Override
         @Transactional
-        public PersonagemDTO atualizarPersonagem(Long id, PersonagemDTO dto) {
+        public PersonagemResponseDTO atualizarPersonagem(Long id, PersonagemRequestDTO dto) {
                 Personagem existente = personagemValidator.validarExistencia(id);
 
                 existente.setNome(dto.getNome());
@@ -74,14 +77,22 @@ public class PersonagemServiceImpl implements PersonagemService {
         }
 
         @Override
-        public Page<PersonagemDTO> filtrarPersonagens(
+        public Page<PersonagemResponseDTO> filtrarPersonagens(
                         String nome,
                         Long idade,
                         Long idadeMin,
                         Long idadeMax,
                         String aldeia,
-                        Pageable pageable,
+                        int page,
+                        int size,
+                        String direction,
+                        String sortBy,
                         CategoriaEspecialidadeEnum especialidade) {
+
+                Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
+                                : Sort.by(sortBy).ascending();
+
+                Pageable pageable = PageRequest.of(page, size, sort);
 
                 Specification<Personagem> spec = new SpecificationBuilder<Personagem>()
                                 .add(PersonagemSpecifications.comNomeContendo(nome))
@@ -95,4 +106,12 @@ public class PersonagemServiceImpl implements PersonagemService {
                                 .map(personagemMapper::toDto);
         }
 
+        @Override
+        public PersonagemResponseDTO getPersonagemByNome(String nome) {
+                Personagem personagemEncontrada = personagemRepository.findByNome(nome)
+                                .orElseThrow(() -> new RuntimeException("Personagem não encontrado."));
+                PersonagemResponseDTO personagem = personagemMapper.toDto(personagemEncontrada);
+                return personagem;
+
+        }
 }

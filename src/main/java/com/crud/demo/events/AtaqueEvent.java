@@ -1,6 +1,6 @@
 package com.crud.demo.events;
 
-import com.crud.demo.models.DTO.JutsuDTO;
+import com.crud.demo.models.DTO.jutsu.JutsuResponseDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +17,6 @@ public class AtaqueEvent {
 
     private EstatisticaDoJogadorEvent defensor;
 
-    private JutsuDTO jutsuAtaque;
+    private JutsuResponseDTO jutsuAtaque;
 
 }

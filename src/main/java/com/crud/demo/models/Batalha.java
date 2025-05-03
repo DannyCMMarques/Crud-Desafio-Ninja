@@ -16,8 +16,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -25,7 +25,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class Batalha {
 
     @Id
@@ -40,10 +39,11 @@ public class Batalha {
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "status_enum", nullable = false)
+    @NotNull
     private StatusEnum status = StatusEnum.NAO_INICIADA;
 
     @OneToMany(mappedBy = "batalha", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @Builder.Default
+    @NotNull
     private List<ParticipanteBatalha> participantes = new ArrayList<>();
 
 }

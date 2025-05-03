@@ -1,10 +1,10 @@
 package com.crud.demo.factories.contrato;
 
+import com.crud.demo.models.DTO.personagem.PersonagemRequestDTO;
 import com.crud.demo.models.Personagem;
-import com.crud.demo.models.DTO.PersonagemDTO;
 
 public interface PersonagemFactory {
 
-    public Personagem construirTipoPersonagem(PersonagemDTO dto);
+    public Personagem construirTipoPersonagem(PersonagemRequestDTO dto);
 
 }

@@ -1,6 +1,5 @@
 package com.crud.demo.services;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -13,15 +12,16 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.crud.demo.models.Usuario;
-import com.crud.demo.models.DTO.RegistroUsuarioDTO;
+import com.crud.demo.models.DTO.usuario.UsuarioRequestDTO;
+import com.crud.demo.models.DTO.usuario.UsuarioResponseDTO;
 import com.crud.demo.models.mappers.UsuarioMapper;
 import com.crud.demo.repositories.UsuarioRepository;
 import com.crud.demo.utils.TestDataFactoryUsuario;
 import com.crud.demo.validators.UsuarioValidator;
 
 class UsuarioServiceTest {
-@InjectMocks
-    private UsuarioService usuarioService;
+    @InjectMocks
+    private UsuarioServiceImpl usuarioService;
 
     @Mock
     private UsuarioRepository usuarioRepository;
@@ -35,42 +35,49 @@ class UsuarioServiceTest {
     @Mock
     private UsuarioMapper usuarioMapper;
 
-
-    private RegistroUsuarioDTO usuarioDTO;
+    private UsuarioRequestDTO usuarioDTO;
     private Usuario usuarioEntity;
+    private UsuarioResponseDTO usuarioResponseDTO;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-         usuarioDTO = TestDataFactoryUsuario.criarUsuarioDTO();
-         usuarioEntity = TestDataFactoryUsuario.criarUsuarioEntity();
+        usuarioEntity = TestDataFactoryUsuario.criarUsuarioEntity();
+        usuarioEntity.setId(1L);
+
+        usuarioResponseDTO = UsuarioResponseDTO.builder()
+                .id(usuarioEntity.getId())
+                .nome(usuarioEntity.getNome())
+                .email(usuarioEntity.getEmail())
+                .build();
+        usuarioDTO = new UsuarioRequestDTO("João da Silva", "joao@example.com", "senha123");
     }
 
     @Test
-        @DisplayName("Deve cadastrar usuário com sucesso")
+    @DisplayName("Deve cadastrar usuário com sucesso")
     void deveCadastrarUsuarioComSucesso() {
-
 
         doNothing().when(usuarioValidator).validarCadastro(usuarioDTO.getEmail());
         when(usuarioMapper.toEntity(usuarioDTO)).thenReturn(usuarioEntity);
         when(passwordEncoder.encode(usuarioEntity.getSenha())).thenReturn("senhaCriptografada");
         when(usuarioRepository.save(usuarioEntity)).thenReturn(usuarioEntity);
-        when(usuarioMapper.toDto(usuarioEntity)).thenReturn(usuarioDTO);
+        when(usuarioMapper.toDto(usuarioEntity)).thenReturn(usuarioResponseDTO);
 
-        RegistroUsuarioDTO usuarioCriado = usuarioService.cadastrarUsuario(usuarioDTO);
+        UsuarioResponseDTO usuarioCriado = usuarioService.cadastrarUsuario(usuarioDTO);
 
         assertNotNull(usuarioCriado);
         assertEquals(usuarioDTO.getNome(), usuarioCriado.getNome());
         assertEquals(usuarioDTO.getEmail(), usuarioCriado.getEmail());
         verify(usuarioRepository, times(1)).save(usuarioEntity);
     }
+
     @Test
     @DisplayName("Deve buscar usuário por ID com sucesso")
     void deveBuscarUsuarioPorIdComSucesso() {
+        when(usuarioValidator.validarExistencia(1L)).thenReturn(usuarioEntity);
 
-        when(usuarioValidator.validarExistencia(usuarioEntity.getId())).thenReturn(usuarioEntity);
-        when(usuarioMapper.toDto(usuarioEntity)).thenReturn(usuarioDTO);
-
-        RegistroUsuarioDTO usuarioBuscado = usuarioService.buscarUsuarioPorId(usuarioEntity.getId());
+        when(usuarioMapper.toDto(usuarioEntity)).thenReturn(usuarioResponseDTO);
+        UsuarioResponseDTO usuarioBuscado = usuarioService.buscarUsuarioPorId(1L);
 
         assertNotNull(usuarioBuscado);
         assertEquals(usuarioDTO.getNome(), usuarioBuscado.getNome());
@@ -92,18 +99,35 @@ class UsuarioServiceTest {
     @DisplayName("Deve atualizar usuário com sucesso")
     void deveAtualizarUsuarioComSucesso() {
 
-        RegistroUsuarioDTO usuarioAtualizadoDTO = TestDataFactoryUsuario.criarUsuarioDTO();
+        Long id = 1L;
+        usuarioEntity.setId(id);
 
-        when(usuarioValidator.validarExistencia(usuarioEntity.getId())).thenReturn(usuarioEntity);
-        when(usuarioMapper.toDto(usuarioEntity)).thenReturn(usuarioAtualizadoDTO);
-        when(usuarioRepository.save(usuarioEntity)).thenReturn(usuarioEntity);
-        when(passwordEncoder.encode(usuarioEntity.getSenha())).thenReturn("senhaCriptografada");
+        when(usuarioValidator.validarExistencia(id))
+                .thenReturn(usuarioEntity);
 
-        RegistroUsuarioDTO usuarioAtualizado = usuarioService.atualizarUsuario(usuarioEntity.getId(), usuarioDTO);
+        doNothing().when(usuarioValidator)
+                .validarCadastro(usuarioDTO.getEmail());
+
+        when(usuarioMapper.toEntity(usuarioDTO))
+                .thenReturn(usuarioEntity);
+
+        when(passwordEncoder.encode(usuarioDTO.getSenha()))
+                .thenReturn("senhaCriptografada");
+
+        when(usuarioRepository.save(usuarioEntity))
+                .thenReturn(usuarioEntity);
+
+        when(usuarioMapper.toDto(usuarioEntity))
+                .thenReturn(usuarioResponseDTO);
+
+        UsuarioResponseDTO usuarioAtualizado = usuarioService.atualizarUsuario(id, usuarioDTO);
 
         assertNotNull(usuarioAtualizado);
         assertEquals(usuarioDTO.getNome(), usuarioAtualizado.getNome());
         assertEquals(usuarioDTO.getEmail(), usuarioAtualizado.getEmail());
-        verify(usuarioRepository, times(1)).save(usuarioEntity);
+
+        verify(usuarioMapper).toEntity(usuarioDTO);
+        verify(usuarioRepository).save(usuarioEntity);
     }
+
 }

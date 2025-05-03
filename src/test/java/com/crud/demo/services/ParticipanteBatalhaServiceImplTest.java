@@ -1,6 +1,6 @@
 package com.crud.demo.services;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -17,9 +17,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import com.crud.demo.models.Batalha;
 import com.crud.demo.models.ParticipanteBatalha;
+import com.crud.demo.models.Personagem;
 import com.crud.demo.models.Usuario;
-import com.crud.demo.models.DTO.ParticipanteBatalhaDTO;
+import com.crud.demo.models.DTO.participanteBatalha.ParticipanteBatalhaRequestDTO;
+import com.crud.demo.models.DTO.participanteBatalha.ParticipanteBatalhaResponseDTO;
 import com.crud.demo.models.mappers.ParticipanteBatalhaMapper;
 import com.crud.demo.repositories.ParticipanteBatalhaRepository;
 import com.crud.demo.validators.ParticipanteBatalhaValidator;
@@ -29,130 +32,144 @@ import com.crud.demo.validators.UsuarioValidator;
 @ExtendWith(MockitoExtension.class)
 class ParticipanteBatalhaServiceImplTest {
 
-    @Mock
-    private ParticipanteBatalhaRepository participanteRepo;
-    @Mock
-    private ParticipanteBatalhaValidator participanteValidator;
-    @Mock
-    private ParticipanteBatalhaMapper participanteMapper;
-    @Mock
-    private UsuarioValidator usuarioValidator;
-    @Mock
-    private PersonagemValidator personagemValidator;
+        @Mock
+        private ParticipanteBatalhaRepository participanteRepo;
+        @Mock
+        private ParticipanteBatalhaValidator participanteValidator;
+        @Mock
+        private ParticipanteBatalhaMapper participanteMapper;
+        @Mock
+        private UsuarioValidator usuarioValidator;
+        @Mock
+        private PersonagemValidator personagemValidator;
 
-    @InjectMocks
-    private ParticipanteBatalhaServiceImpl service;
+        @InjectMocks
+        private ParticipanteBatalhaServiceImpl service;
 
-    private ParticipanteBatalhaDTO dto;
-    private ParticipanteBatalha entity;
-    private Usuario usuario;
+        private ParticipanteBatalhaResponseDTO dto;
+        private ParticipanteBatalha entity;
+        private Usuario usuario;
+        private ParticipanteBatalhaRequestDTO requestDTO;
+        private Personagem naruto;
+        private Batalha batalha = new Batalha();
 
-    @BeforeEach
-    void setUp() {
-        dto = ParticipanteBatalhaDTO.builder()
-                .id(1L)
-                .nomeUsuario("naruto")
-                .playerOrder(1)
-                .vencedor(false)
-                .build();
+        @BeforeEach
+        void setUp() {
 
-        usuario = new Usuario();
-        usuario.setId(11L);
+                requestDTO = new ParticipanteBatalhaRequestDTO(1L, "Joao", "naruto", 1, false);
+                dto = ParticipanteBatalhaResponseDTO.builder()
+                                .id(1L)
+                                .batalha(1L)
+                                .personagem("naruto")
+                                .nomeUsuario("Joao")
+                                .playerOrder(1)
+                                .vencedor(false)
+                                .build();
 
-        entity = new ParticipanteBatalha();
-        entity.setId(1L);
-        entity.setUsuario(usuario);
-        entity.setPlayerOrder(1);
-        entity.setVencedor(false);
-    }
+                usuario = new Usuario();
+                usuario.setId(11L);
 
+                naruto = new Personagem();
+                entity = new ParticipanteBatalha();
 
-    @Test
-    @DisplayName("criarParticipanteBatalha – Deve salvar e devolver DTO")
-    void deveCriarParticipante() {
-        when(usuarioValidator.validarExistencia("naruto"))
-                .thenReturn(usuario);
-        when(participanteMapper.toEntity(dto, usuario))
-                .thenReturn(entity);
-        when(participanteRepo.save(entity))
-                .thenReturn(entity);
-        when(participanteMapper.toDto(entity))
-                .thenReturn(dto);
+                entity.setId(1L);
+                entity.setBatalha(batalha);
+                entity.setPersonagem(naruto);
+                entity.setUsuario(usuario);
+                entity.setPlayerOrder(1);
+                entity.setVencedor(false);
+        }
 
-        ParticipanteBatalhaDTO resultado = service.criarParticipanteBatalha(dto);
+        @Test
+        @DisplayName("criarParticipanteBatalha – Deve salvar e devolver DTO")
+        void deveCriarParticipante() {
+                when(usuarioValidator.validarExistencia("Joao"))
+                                .thenReturn(usuario);
 
-        assertThat(resultado).isEqualTo(dto);
-        verify(participanteRepo).save(entity);
-    }
+                when(participanteMapper.toEntity(requestDTO))
+                                .thenReturn(entity);
+                when(participanteRepo.save(entity))
+                                .thenReturn(entity);
+                when(participanteMapper.toDto(entity))
+                                .thenReturn(dto);
 
+                ParticipanteBatalhaResponseDTO resultado = service.criarParticipanteBatalha(requestDTO);
 
-    @Test
-    @DisplayName("deletarParticipanteBatalha – Deve validar e deletar")
-    void deveDeletarParticipante() {
-        when(participanteValidator.verificarParticipanteBatalhaDTO(1L))
-                .thenReturn(entity);
+                assertThat(resultado).isEqualTo(dto);
+                verify(participanteRepo).save(entity);
+        }
 
-        service.deletarParticipanteBatalha(1L);
+        @Test
+        @DisplayName("deletarParticipanteBatalha – Deve validar e deletar")
+        void deveDeletarParticipante() {
+                when(participanteValidator.verificarParticipanteBatalhaDTO(1L))
+                                .thenReturn(entity);
 
-        verify(participanteValidator).verificarParticipanteBatalhaDTO(1L);
-        verify(participanteRepo).deleteById(1L);
-    }
+                service.deletarParticipanteBatalha(1L);
 
-    @Test
-    @DisplayName("getParticipanteBatalhaById – Deve retornar DTO correto")
-    void deveBuscarParticipantePorId() {
-        when(participanteValidator.verificarParticipanteBatalhaDTO(1L))
-                .thenReturn(entity);
-        when(participanteMapper.toDto(entity))
-                .thenReturn(dto);
+                verify(participanteValidator).verificarParticipanteBatalhaDTO(1L);
+                verify(participanteRepo).deleteById(1L);
+        }
 
-        ParticipanteBatalhaDTO resultado = service.getParticipanteBatalhaById(1L);
+        @Test
+        @DisplayName("getParticipanteBatalhaById – Deve retornar DTO correto")
+        void deveBuscarParticipantePorId() {
+                when(participanteValidator.verificarParticipanteBatalhaDTO(1L))
+                                .thenReturn(entity);
+                when(participanteMapper.toDto(entity))
+                                .thenReturn(dto);
 
-        assertThat(resultado).isEqualTo(dto);
-        verify(participanteValidator).verificarParticipanteBatalhaDTO(1L);
-    }
+                ParticipanteBatalhaResponseDTO resultado = service.getParticipanteBatalhaById(1L);
 
-    @Test
-    @DisplayName("atualizarParticipanteBatalha – Deve atualizar campos e retornar DTO")
-    void deveAtualizarParticipante() {
-        ParticipanteBatalhaDTO dtoAtualizado = ParticipanteBatalhaDTO.builder()
-                .id(1L)
-                .playerOrder(2)
-                .vencedor(true)
-                .build();
+                assertThat(resultado).isEqualTo(dto);
+                verify(participanteValidator).verificarParticipanteBatalhaDTO(1L);
+        }
 
-        ParticipanteBatalha entityAtualizado = new ParticipanteBatalha();
-        entityAtualizado.setId(1L);
-        entityAtualizado.setPlayerOrder(2);
-        entityAtualizado.setVencedor(true);
+        @Test
+        @DisplayName("atualizarParticipanteBatalha – Deve atualizar campos e retornar DTO")
+        void deveAtualizarParticipante() {
+                when(participanteValidator.verificarParticipanteBatalhaDTO(1L))
+                                .thenReturn(entity);
 
-        when(participanteValidator.verificarParticipanteBatalhaDTO(1L))
-                .thenReturn(entity);
-        when(participanteRepo.save(entity))
-                .thenReturn(entityAtualizado);
-        when(participanteMapper.toDto(entityAtualizado))
-                .thenReturn(dtoAtualizado);
+                ParticipanteBatalhaResponseDTO dtoOriginal = dto;
+                ParticipanteBatalhaResponseDTO dtoAtualizado = ParticipanteBatalhaResponseDTO.builder()
+                                .id(1L).batalha(1L).personagem("naruto").nomeUsuario("Joao")
+                                .playerOrder(2).vencedor(true)
+                                .build();
 
-        ParticipanteBatalhaDTO resultado = service.atualizarParticipanteBatalha(1L, dtoAtualizado);
+                when(participanteMapper.toDto(entity))
+                                .thenReturn(dtoOriginal)
+                                .thenReturn(dtoAtualizado);
 
-        assertThat(resultado.getPlayerOrder()).isEqualTo(2);
-        assertThat(resultado.getVencedor()).isTrue();
-    }
+                when(participanteMapper.toEntity(dtoOriginal))
+                                .thenReturn(entity);
 
-  
-    @Test
-    @DisplayName("listarTodosParticipantes – Deve retornar página de DTOs")
-    void deveListarParticipantes() {
-        Page<ParticipanteBatalha> pageEntities = new PageImpl<>(List.of(entity));
-        when(participanteRepo.findAll(any(PageRequest.class)))
-                .thenReturn(pageEntities);
-        when(participanteMapper.toDto(entity))
-                .thenReturn(dto);
+                when(participanteRepo.save(entity))
+                                .thenReturn(entity);
 
-        Page<ParticipanteBatalhaDTO> resultado = service.listarTodosParticipantes(PageRequest.of(0, 10));
+                requestDTO.setPlayerOrder(2);
+                requestDTO.setVencedor(true);
 
-        assertThat(resultado.getContent()).hasSize(1)
-                .extracting(ParticipanteBatalhaDTO::getId)
-                .containsExactly(1L);
-    }
+                ParticipanteBatalhaResponseDTO resultado = service.atualizarParticipanteBatalha(1L, requestDTO);
+
+                assertThat(resultado.getPlayerOrder()).isEqualTo(2);
+                assertThat(resultado.getVencedor()).isTrue();
+                verify(participanteRepo).save(entity);
+        }
+
+        @Test
+        @DisplayName("listarTodosParticipantes – Deve retornar página de DTOs")
+        void deveListarParticipantes() {
+                Page<ParticipanteBatalha> pageEntities = new PageImpl<>(List.of(entity));
+                when(participanteRepo.findAll(any(PageRequest.class)))
+                                .thenReturn(pageEntities);
+                when(participanteMapper.toDto(entity))
+                                .thenReturn(dto);
+
+                Page<ParticipanteBatalhaResponseDTO> resultado = service.listarTodosParticipantes("asc", "id", 0, 10);
+
+                assertThat(resultado.getContent()).hasSize(1)
+                                .extracting(ParticipanteBatalhaResponseDTO::getId)
+                                .containsExactly(1L);
+        }
 }

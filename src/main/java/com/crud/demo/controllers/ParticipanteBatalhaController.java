@@ -5,9 +5,6 @@ import java.net.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.crud.demo.models.DTO.ParticipanteBatalhaDTO;
+import com.crud.demo.models.DTO.participanteBatalha.ParticipanteBatalhaRequestDTO;
+import com.crud.demo.models.DTO.participanteBatalha.ParticipanteBatalhaResponseDTO;
 import com.crud.demo.services.contratos.ParticipanteBatalhaService;
 import com.crud.demo.utils.UriLocationUtils;
 
@@ -44,12 +42,13 @@ public class ParticipanteBatalhaController {
     @PostMapping
     @Operation(summary = "Cadastrar um Participante de Batalha")
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Participante criado com sucesso"),
-        @ApiResponse(responseCode = "400", description = "Dados inválidos")
+            @ApiResponse(responseCode = "201", description = "Participante criado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos")
     })
-    public ResponseEntity<ParticipanteBatalhaDTO> cadastrarParticipante(
-            @Valid @RequestBody ParticipanteBatalhaDTO dto) {
-        ParticipanteBatalhaDTO participanteCriado = participanteBatalhaService.criarParticipanteBatalha(dto);
+    public ResponseEntity<ParticipanteBatalhaResponseDTO> cadastrarParticipante(
+            @Valid @RequestBody ParticipanteBatalhaRequestDTO dto) {
+        ParticipanteBatalhaResponseDTO participanteCriado = participanteBatalhaService.criarParticipanteBatalha(dto);
+        log.info("Requisição de POST para criar participante de batalha, dados={}", dto);
         log.info("Participante de batalha criado com sucesso, id={}", participanteCriado.getId());
 
         URI location = UriLocationUtils.criarLocationUri("api/v1/participante-batalha", participanteCriado.getId());
@@ -59,8 +58,8 @@ public class ParticipanteBatalhaController {
     @DeleteMapping("{id}")
     @Operation(summary = "Excluir um Participante de Batalha por ID")
     @ApiResponses({
-        @ApiResponse(responseCode = "204", description = "Participante excluído com sucesso"),
-        @ApiResponse(responseCode = "404", description = "Participante não encontrado")
+            @ApiResponse(responseCode = "204", description = "Participante excluído com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Participante não encontrado")
     })
     public ResponseEntity<Void> deletar(@PathVariable long id) {
         log.info("Requisição de DELETE para participante de batalha id={}", id);
@@ -71,45 +70,43 @@ public class ParticipanteBatalhaController {
     @PutMapping("{id}")
     @Operation(summary = "Atualizar um Participante de Batalha existente")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Participante atualizado com sucesso"),
-        @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-        @ApiResponse(responseCode = "404", description = "Participante não encontrado")
+            @ApiResponse(responseCode = "200", description = "Participante atualizado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "404", description = "Participante não encontrado")
     })
-    public ResponseEntity<ParticipanteBatalhaDTO> atualizar(@PathVariable long id,
-            @Valid @RequestBody ParticipanteBatalhaDTO dto) {
+    public ResponseEntity<ParticipanteBatalhaResponseDTO> atualizar(@PathVariable long id,
+            @Valid @RequestBody ParticipanteBatalhaRequestDTO dto) {
         log.info("Requisição de UPDATE para participante id={}, dados={}", id, dto);
-        ParticipanteBatalhaDTO atualizado = participanteBatalhaService.atualizarParticipanteBatalha(id, dto);
+        ParticipanteBatalhaResponseDTO atualizado = participanteBatalhaService.atualizarParticipanteBatalha(id, dto);
+        log.info("Participante de batalha atualizado com sucesso, id={}", atualizado.getId());
         return ResponseEntity.ok(atualizado);
     }
 
     @GetMapping("{id}")
     @Operation(summary = "Buscar Participante de Batalha por ID")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Participante encontrado com sucesso"),
-        @ApiResponse(responseCode = "404", description = "Participante não encontrado")
+            @ApiResponse(responseCode = "200", description = "Participante encontrado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Participante não encontrado")
     })
-    public ResponseEntity<ParticipanteBatalhaDTO> buscarPorId(@PathVariable long id) {
+    public ResponseEntity<ParticipanteBatalhaResponseDTO> buscarPorId(@PathVariable long id) {
         log.info("Requisição de GET para participante de batalha id={}", id);
-        ParticipanteBatalhaDTO participante = participanteBatalhaService.getParticipanteBatalhaById(id);
+        ParticipanteBatalhaResponseDTO participante = participanteBatalhaService.getParticipanteBatalhaById(id);
         return ResponseEntity.ok(participante);
     }
 
     @GetMapping
     @Operation(summary = "Listar ou filtrar Participantes de Batalha", description = "Retorna uma lista paginada de participantes com filtros opcionais.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Lista de participantes retornada com sucesso"),
-        @ApiResponse(responseCode = "400", description = "Requisição inválida")
+            @ApiResponse(responseCode = "200", description = "Lista de participantes retornada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Requisição inválida")
     })
-    public ResponseEntity<Page<ParticipanteBatalhaDTO>> listarParticipantes(
+    public ResponseEntity<Page<ParticipanteBatalhaResponseDTO>> listarParticipantes(
             @Parameter(description = "Número da página") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Tamanho da página") @RequestParam(defaultValue = "10") int size,
             @Parameter(description = "Campo para ordenar") @RequestParam(defaultValue = "nomeUsuario") String sortBy,
             @Parameter(description = "Direção da ordenação (asc ou desc)") @RequestParam(defaultValue = "asc") String direction) {
 
-        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-
-        Page<ParticipanteBatalhaDTO> participantes = participanteBatalhaService.listarTodosParticipantes(pageable);
+        Page<ParticipanteBatalhaResponseDTO> participantes = participanteBatalhaService.listarTodosParticipantes(sortBy, direction, page, size);
         log.debug("Total de participantes encontrados: {}", participantes.getTotalElements());
 
         if (participantes.isEmpty()) {

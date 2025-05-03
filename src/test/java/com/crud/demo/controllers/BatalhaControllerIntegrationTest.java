@@ -1,16 +1,16 @@
 package com.crud.demo.controllers;
 
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,15 +20,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.crud.demo.models.DTO.BatalhaDTO;
-import com.crud.demo.models.DTO.BatalhaRequestDTO;
+import com.crud.demo.models.DTO.batalha.BatalhaRequestDTO;
+import com.crud.demo.models.DTO.batalha.BatalhaResponseDTO;
 import com.crud.demo.models.enuns.StatusEnum;
 import com.crud.demo.security.JwtAuthenticationFilter;
 import com.crud.demo.services.BatalhaServiceImpl;
@@ -56,7 +50,7 @@ class BatalhaControllerIntegrationTest {
         @MockBean
         private BatalhaServiceImpl batalhaService;
 
-        private BatalhaDTO batalhaDTO;
+        private BatalhaResponseDTO batalhaDTO;
         private BatalhaRequestDTO batalhaRequest;
 
         @BeforeEach
@@ -69,12 +63,12 @@ class BatalhaControllerIntegrationTest {
                         return null;
                 }).when(jwtAuthenticationFilter).doFilterInternal(any(), any(), any());
 
-                batalhaDTO = new BatalhaDTO(
-                                1L,
-                                LocalDateTime.now(),
-                                null,
-                                StatusEnum.NAO_INICIADA,
-                                List.of());
+                batalhaDTO = BatalhaResponseDTO.builder()
+                                .id(1L)
+                                .criadoEm(LocalDateTime.now())
+                                .status(StatusEnum.NAO_INICIADA)
+                                .participantesBatalha(List.of())
+                                .build();
 
                 batalhaRequest = new BatalhaRequestDTO();
                 batalhaRequest.setFinalizadoEm(null);
@@ -83,7 +77,7 @@ class BatalhaControllerIntegrationTest {
                                 .thenReturn(batalhaDTO);
                 when(batalhaService.getBatalhaById(1L))
                                 .thenReturn(batalhaDTO);
-                when(batalhaService.atualizarBatalha(eq(1L), any(BatalhaDTO.class)))
+                when(batalhaService.atualizarBatalha(eq(1L), any(BatalhaResponseDTO.class)))
                                 .thenReturn(batalhaDTO);
         }
 

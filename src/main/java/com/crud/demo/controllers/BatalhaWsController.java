@@ -11,9 +11,8 @@ import org.springframework.stereotype.Controller;
 import com.crud.demo.events.AtaqueEvent;
 import com.crud.demo.events.BatalhaStartEvent;
 import com.crud.demo.events.EstatisticaDoJogadorEvent;
-import com.crud.demo.models.Jutsu;
-import com.crud.demo.models.DTO.AtaqueRequestDTO;
-import com.crud.demo.models.mappers.JutsuMapper;
+import com.crud.demo.models.DTO.jutsu.JutsuResponseDTO;
+import com.crud.demo.models.DTO.websocket.AtaqueRequestDTO;
 import com.crud.demo.services.EstatisticasDoJogadorStore;
 import com.crud.demo.services.contratos.BatalhaService;
 import com.crud.demo.services.contratos.JutsuService;
@@ -29,7 +28,6 @@ public class BatalhaWsController {
         private final ApplicationEventPublisher publisher;
         private final JutsuService jutsuService;
         private final EstatisticasDoJogadorStore estatisticasStore;
-        private final JutsuMapper jutsuMapper;
         private final BatalhaService batalhaService;
 
         @MessageMapping("/batalha/{idBatalha}/start")
@@ -57,10 +55,9 @@ public class BatalhaWsController {
                                 ataqueReq.getIdDefensor());
                 log.info("Jutsu", ataqueReq.getJutsuEscolhido());
 
-                Jutsu jutsu = jutsuService.getJutsuByTipo(ataqueReq.getJutsuEscolhido());
+                JutsuResponseDTO jutsu = jutsuService.getJutsuByTipo(ataqueReq.getJutsuEscolhido());
 
-                AtaqueEvent ataqueEvent = new AtaqueEvent(idBatalha, estatisticasAtacante, estatisticasDefensor,
-                                jutsuMapper.toDto(jutsu));
+                AtaqueEvent ataqueEvent = new AtaqueEvent(idBatalha, estatisticasAtacante, estatisticasDefensor,  jutsu);
 
                 publisher.publishEvent(ataqueEvent);
 
