@@ -3,17 +3,15 @@ package com.crud.demo.services.contratos;
 import java.util.Map;
 
 import com.crud.demo.events.EstatisticaDoJogadorEvent;
-import com.crud.demo.models.Jutsu;
-import com.crud.demo.models.DTO.JutsuDTO;
+import com.crud.demo.models.DTO.jutsu.JutsuResponseDTO;
 
 public interface JutsuService {
 
-    Map<String, JutsuDTO> obterJutsusDisponiveis(EstatisticaDoJogadorEvent personagemEvent);
+    Map<String, JutsuResponseDTO> obterJutsusDisponiveis(EstatisticaDoJogadorEvent personagemEvent);
 
-    void adicionarHistorico(EstatisticaDoJogadorEvent personagemEvent, JutsuDTO jutsuGasto);
+    void adicionarHistorico(EstatisticaDoJogadorEvent personagemEvent, JutsuResponseDTO jutsuGasto);
 
-    Jutsu getJutsuById(Long id);
+    JutsuResponseDTO getJutsuById(Long id);
 
-    Jutsu getJutsuByTipo(String tipo);
-
+    JutsuResponseDTO getJutsuByTipo(String tipo);
 }

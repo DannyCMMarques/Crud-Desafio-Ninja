@@ -3,7 +3,6 @@ package com.crud.demo.websocket.notificacoes;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
 
-import com.crud.demo.models.DTO.AlertaDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+
+import com.crud.demo.models.DTO.websocket.AlertaDTO;
 
 class AlertNotificacoesTest {
 

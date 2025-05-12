@@ -3,23 +3,25 @@ package com.crud.demo.services.contratos;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
-import com.crud.demo.models.DTO.ParticipanteBatalhaDTO;
-import com.crud.demo.models.DTO.PersonagemDTO;
+import com.crud.demo.models.DTO.participanteBatalha.ParticipanteBatalhaRequestDTO;
+import com.crud.demo.models.DTO.participanteBatalha.ParticipanteBatalhaResponseDTO;
+import com.crud.demo.models.DTO.personagem.PersonagemResponseDTO;
 
 public interface ParticipanteBatalhaService {
 
-    ParticipanteBatalhaDTO criarParticipanteBatalha(ParticipanteBatalhaDTO dto);
+    ParticipanteBatalhaResponseDTO criarParticipanteBatalha(ParticipanteBatalhaRequestDTO dto);
 
     void deletarParticipanteBatalha(Long id);
 
-    ParticipanteBatalhaDTO getParticipanteBatalhaById(Long id);
+    ParticipanteBatalhaResponseDTO getParticipanteBatalhaById(Long id);
 
-    ParticipanteBatalhaDTO atualizarParticipanteBatalha(Long id, ParticipanteBatalhaDTO participanteBDTO);
+    ParticipanteBatalhaResponseDTO atualizarParticipanteBatalha(Long id,
+            ParticipanteBatalhaRequestDTO participanteBDTO);
 
-    Page<ParticipanteBatalhaDTO> listarTodosParticipantes(Pageable pageable);
 
-    List<PersonagemDTO> getPersonagemByBatalhaId(Long id);
+    Page<ParticipanteBatalhaResponseDTO> listarTodosParticipantes(String direction, String sortBy, int page, int size);
+
+    List<PersonagemResponseDTO> getPersonagemByBatalhaId(Long id);
 
 }

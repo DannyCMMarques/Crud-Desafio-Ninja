@@ -1,30 +1,37 @@
 package com.crud.demo.models.tiposPersonagens;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 
 import com.crud.demo.events.EstatisticaDoJogadorEvent;
 import com.crud.demo.models.Personagem;
-import com.crud.demo.models.DTO.JutsuDTO;
+import com.crud.demo.models.DTO.jutsu.JutsuResponseDTO;
 
 class NinjaDeNinjutsuTest {
+    @InjectMocks
+      private NinjaDeNinjutsu ninjaDeNinjutsu;
+
+      @BeforeEach
+        void setUp() {
+            ninjaDeNinjutsu = new NinjaDeNinjutsu();
+            ninjaDeNinjutsu.setNome("Kakashi");
+        }
 
     @Test
     @DisplayName("Deve usar jutsu corretamente")
     void deveUsarJutsu() {
-        NinjaDeNinjutsu ninja = new NinjaDeNinjutsu();
-        ninja.setNome("Kakashi");
-
         Personagem adversario = new Personagem();
         adversario.setNome("Naruto");
 
-        JutsuDTO jutsu = new JutsuDTO();
-        jutsu.setTipo("Raikiri");
-        jutsu.setDano(50);
+        JutsuResponseDTO jutsu = JutsuResponseDTO.builder()
+            .tipo("Raikiri")
+            .dano(50)
+            .build();
 
-        String resultado = ninja.usarJutsu(adversario, jutsu);
+        String resultado = ninjaDeNinjutsu.usarJutsu(adversario, jutsu);
 
         String esperado = "Houve um ataque: Kakashi,um ninja de Ninjutsu, usa 'Raikiri' e causa a perda de 50 chakras no adversário";
         assertEquals(esperado, resultado);

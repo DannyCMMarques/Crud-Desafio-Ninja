@@ -1,16 +1,17 @@
 package com.crud.demo.controllers;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import java.io.IOException;
 import java.util.Date;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,11 +20,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.crud.demo.models.DTO.LoginDTO;
-import com.crud.demo.models.DTO.LoginResponseDTO;
+import com.crud.demo.Exceptions.usuarioException.UsuarioNaoAutorizadoException;
+import com.crud.demo.models.DTO.login.LoginDTO;
+import com.crud.demo.models.DTO.login.LoginResponseDTO;
 import com.crud.demo.security.JwtAuthenticationFilter;
-import com.crud.demo.services.LoginService;
+import com.crud.demo.services.LoginServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.FilterChain;
@@ -43,10 +48,13 @@ class LoginControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private LoginService loginService;
+    private LoginServiceImpl loginService;
 
     @MockBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private String token;
+    private LoginResponseDTO loginResponseDTO;
+    private LoginDTO loginRequestDTO;
 
     @BeforeEach
     void setUp() throws ServletException, IOException {
@@ -59,37 +67,37 @@ class LoginControllerTest {
         }).when(jwtAuthenticationFilter)
                 .doFilterInternal(any(), any(), any());
 
+        loginRequestDTO = new LoginDTO("user@example.com", "senha123");
+
+        token = "jwt-token-123";
+
+        loginResponseDTO = LoginResponseDTO.builder()
+                .token(token)
+                .sub("user@example.com")
+                .role("USER")
+                .createdAt("2025-04-21T18:00:00Z")
+                .exp(new Date(1_650_000_000_000L))
+                .iat(1_650_000_000L)
+                .build();
+
+        when(loginService.autentificar(any(LoginDTO.class))).thenReturn(token);
+        when(loginService.gerarLoginResponse(token)).thenReturn(loginResponseDTO);
+
     }
 
     @Test
     @DisplayName("Deve realizar login com sucesso")
     void deveRealizarLoginComSucesso() throws Exception {
-        LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setEmail("user@example.com");
-        loginDTO.setSenha("senha123");
-
-        String token = "jwt-token-123";
-        LoginResponseDTO responseDTO = new LoginResponseDTO();
-        responseDTO.setToken(token);
-        responseDTO.setSub("user@example.com");
-        responseDTO.setRole("USER");
-        responseDTO.setCreatedAt("2025-04-21T18:00:00Z");
-        responseDTO.setExp(new Date(1_650_000_000_000L));
-        responseDTO.setIat(1_650_000_000L);
-
-        when(loginService.autentificar(any(LoginDTO.class))).thenReturn(token);
-        when(loginService.gerarLoginResponse(token)).thenReturn(responseDTO);
-
         mockMvc.perform(post("/api/v1/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginDTO)))
+                .content(objectMapper.writeValueAsString(loginRequestDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").value(token))
                 .andExpect(jsonPath("$.sub").value("user@example.com"))
                 .andExpect(jsonPath("$.role").value("USER"))
                 .andExpect(jsonPath("$.createdAt").value("2025-04-21T18:00:00Z"))
                 .andExpect(jsonPath("$.exp").exists())
-                .andExpect(jsonPath("$.iat").value(responseDTO.getIat()));
+                .andExpect(jsonPath("$.iat").value(loginResponseDTO.getIat()));
 
         verify(loginService).autentificar(any(LoginDTO.class));
         verify(loginService).gerarLoginResponse(token);
@@ -98,17 +106,15 @@ class LoginControllerTest {
     @Test
     @DisplayName("Deve retornar Bad Request quando credenciais inválidas")
     void deveRetornarBadRequestQuandoCredenciaisInvalidas() throws Exception {
-        when(loginService.autentificar(any(LoginDTO.class)))
-                .thenThrow(new RuntimeException("Credenciais inválidas"));
 
-        LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setEmail("user@example.com");
-        loginDTO.setSenha("wrongpass");
+        LoginDTO loginRequestWrong = new LoginDTO("user@example.com", "wrongpass");
+
+        when(loginService.autentificar(loginRequestWrong)).thenThrow(new UsuarioNaoAutorizadoException());
 
         mockMvc.perform(post("/api/v1/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginDTO)))
-                .andExpect(status().isBadRequest());
+                .content(objectMapper.writeValueAsString(loginRequestWrong)))
+                .andExpect(status().isUnauthorized());
 
         verify(loginService).autentificar(any(LoginDTO.class));
         verify(loginService, never()).gerarLoginResponse(anyString());

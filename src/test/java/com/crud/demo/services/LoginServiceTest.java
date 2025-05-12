@@ -25,8 +25,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.crud.demo.models.DTO.LoginDTO;
-import com.crud.demo.models.DTO.LoginResponseDTO;
+import com.crud.demo.models.DTO.login.LoginDTO;
+import com.crud.demo.models.DTO.login.LoginResponseDTO;
 import com.crud.demo.security.Service.JWTService;
 import com.crud.demo.validators.UsuarioValidator;
 
@@ -45,7 +45,9 @@ class LoginServiceTest {
     private JWTService jwtService;
 
     @InjectMocks
-    private LoginService loginService;
+    private LoginServiceImpl loginService;
+
+    private LoginDTO dto;
 
     @BeforeEach
     void setUp() {
@@ -55,9 +57,7 @@ class LoginServiceTest {
     @Test
     @DisplayName("Deve autenticar com sucesso")
     void testAutentificar_Success() {
-        LoginDTO dto = new LoginDTO();
-        dto.setEmail("user@example.com");
-        dto.setSenha("password123");
+        dto = new LoginDTO("user@example.com", "password123");
 
         UserDetails userDetails = mock(UserDetails.class);
         Authentication auth = mock(Authentication.class);

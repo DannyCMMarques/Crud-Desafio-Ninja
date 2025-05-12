@@ -9,6 +9,7 @@ import java.util.Map;
 import com.crud.demo.events.EstatisticaDoJogadorEvent;
 import com.crud.demo.models.Personagem;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class EstatisticasDoJogadorStoreTest {
@@ -21,6 +22,7 @@ class EstatisticasDoJogadorStoreTest {
     }
 
     @Test
+    @DisplayName("iniciarBatalha – deve criar mapa interno com estatísticas")
     void deveIniciarBatalhaComEstatisticas() {
         EstatisticaDoJogadorEvent estatistica = criarEstatistica(1L);
 
@@ -32,6 +34,7 @@ class EstatisticasDoJogadorStoreTest {
     }
 
     @Test
+    @DisplayName("getEstatistica – deve retornar estatística específica")
     void deveRetornarEstatisticaEspecifica() {
         EstatisticaDoJogadorEvent estatistica = criarEstatistica(2L);
         store.iniciarBatalha(200L, List.of(estatistica));
@@ -42,6 +45,7 @@ class EstatisticasDoJogadorStoreTest {
     }
 
     @Test
+    @DisplayName("getEstatisticas – deve retornar lista completa")
     void deveRetornarListaDeEstatisticas() {
         EstatisticaDoJogadorEvent estatistica1 = criarEstatistica(3L);
         EstatisticaDoJogadorEvent estatistica2 = criarEstatistica(4L);
@@ -49,16 +53,18 @@ class EstatisticasDoJogadorStoreTest {
 
         List<EstatisticaDoJogadorEvent> estatisticas = store.getEstatisticas(300L);
 
-        assertThat(estatisticas).containsExactlyInAnyOrder(estatistica1, estatistica2);
+        assertThat(estatisticas)
+                .containsExactlyInAnyOrder(estatistica1, estatistica2);
     }
 
     @Test
+    @DisplayName("updateEstatistica – deve substituir valor antigo")
     void deveAtualizarEstatistica() {
         EstatisticaDoJogadorEvent estatistica = criarEstatistica(5L);
         store.iniciarBatalha(400L, List.of(estatistica));
 
         EstatisticaDoJogadorEvent novaEstatistica = criarEstatistica(5L);
-        novaEstatistica.setValor_chakra(50); // Alteração
+        novaEstatistica.setValor_chakra(50);
 
         store.updateEstatistica(400L, novaEstatistica);
 
@@ -67,6 +73,7 @@ class EstatisticasDoJogadorStoreTest {
     }
 
     @Test
+    @DisplayName("updateEstatisticas – deve atualizar lista inteira")
     void deveAtualizarListaDeEstatisticas() {
         EstatisticaDoJogadorEvent estatistica1 = criarEstatistica(6L);
         EstatisticaDoJogadorEvent estatistica2 = criarEstatistica(7L);
@@ -85,34 +92,35 @@ class EstatisticasDoJogadorStoreTest {
     }
 
     @Test
+    @DisplayName("getEstatistica – deve lançar exceção se batalha não existe")
     void deveLancarExcecaoQuandoBatalhaNaoEncontrada() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            store.getEstatistica(999L, 1L);
-        });
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> store.getEstatistica(999L, 1L));
 
-        assertThat(exception.getMessage()).contains("Estatísticas não iniciadas para battleId=999");
+        assertThat(ex.getMessage()).contains("Estatísticas não iniciadas para battleId=999");
     }
 
     @Test
+    @DisplayName("updateEstatistica – deve lançar exceção se battleId não existe")
     void deveLancarExcecaoAoAtualizarBatalhaInexistente() {
         EstatisticaDoJogadorEvent estatistica = criarEstatistica(10L);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            store.updateEstatistica(888L, estatistica);
-        });
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> store.updateEstatistica(888L, estatistica));
 
-        assertThat(exception.getMessage()).contains("BattleId não encontrado: 888");
+        assertThat(ex.getMessage()).contains("BattleId não encontrado: 888");
     }
 
     private EstatisticaDoJogadorEvent criarEstatistica(Long personagemId) {
         Personagem personagem = new Personagem();
         personagem.setId(personagemId);
 
-        EstatisticaDoJogadorEvent estatistica = new EstatisticaDoJogadorEvent();
-        estatistica.setPersonagem(personagem);
-        estatistica.setValor_chakra(100);
-        estatistica.setVidas(5.0);
-
-        return estatistica;
+        EstatisticaDoJogadorEvent e = new EstatisticaDoJogadorEvent();
+        e.setPersonagem(personagem);
+        e.setValor_chakra(100);
+        e.setVidas(5.0);
+        return e;
     }
 }

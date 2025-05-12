@@ -2,15 +2,16 @@ package com.crud.demo.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.crud.demo.models.DTO.LoginDTO;
-import com.crud.demo.models.DTO.LoginResponseDTO;
-import com.crud.demo.services.LoginService;
+import com.crud.demo.models.DTO.login.LoginDTO;
+import com.crud.demo.models.DTO.login.LoginResponseDTO;
+import com.crud.demo.services.contratos.LoginService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -46,7 +47,7 @@ public class LoginController {
             log.info("[login] Usuário {} autenticado com sucesso.", loginDTO.getEmail());
         } catch (Exception e) {
             log.error("[login] Falha ao autenticar o usuário {}: {}", loginDTO.getEmail(), e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         LoginResponseDTO loginResponse = loginService.gerarLoginResponse(token);
