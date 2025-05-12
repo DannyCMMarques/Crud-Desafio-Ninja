@@ -1,5 +1,7 @@
 package com.crud.demo.services;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -11,9 +13,10 @@ import org.springframework.stereotype.Service;
 import com.crud.demo.Exceptions.batalhaException.BatalhaFinalizadaException;
 import com.crud.demo.Exceptions.batalhaException.BatalhaNaoEncontradaException;
 import com.crud.demo.models.Batalha;
+import com.crud.demo.models.ParticipanteBatalha;
 import com.crud.demo.models.DTO.batalha.BatalhaRequestDTO;
 import com.crud.demo.models.DTO.batalha.BatalhaResponseDTO;
-import com.crud.demo.models.ParticipanteBatalha;
+import com.crud.demo.models.enuns.StatusEnum;
 import com.crud.demo.models.mappers.BatalhaMapper;
 import com.crud.demo.repositories.BatalhaRepository;
 import com.crud.demo.services.contratos.BatalhaService;
@@ -27,13 +30,17 @@ public class BatalhaServiceImpl implements BatalhaService {
     private final BatalhaRepository batalhaRepository;
     private final BatalhaMapper batalhaMapper;
 
-    @Override
-    public BatalhaResponseDTO criarBatalha(BatalhaRequestDTO request) {
-        Batalha batalhaEntity = batalhaMapper.toEntity(request);
-        Batalha salvo = batalhaRepository.save(batalhaEntity);
-        BatalhaResponseDTO batalhaResponseDTO = batalhaMapper.toDto(salvo);
-        return batalhaResponseDTO;
-    }
+ @Override
+public BatalhaResponseDTO criarBatalha(BatalhaRequestDTO request) {
+    Batalha batalha = new Batalha();
+
+    batalha.setCriadoEm(LocalDateTime.now());
+    batalha.setStatus(StatusEnum.NAO_INICIADA);
+    batalha.setParticipantes(new ArrayList<>());
+
+    Batalha salvo = batalhaRepository.save(batalha);
+    return batalhaMapper.toDto(salvo);
+}
 
     @Override
     public void deletarBatalha(Long id) {

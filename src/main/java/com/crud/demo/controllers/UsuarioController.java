@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/usuarios")
@@ -42,7 +43,7 @@ public class UsuarioController {
                         @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso"),
                         @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
         })
-        public ResponseEntity<UsuarioResponseDTO> cadastrarUsuario(@RequestBody UsuarioRequestDTO usuarioDTO) {
+        public ResponseEntity<UsuarioResponseDTO> cadastrarUsuario(@Valid @RequestBody UsuarioRequestDTO usuarioDTO) {
                 UsuarioResponseDTO saved = usuarioService.cadastrarUsuario(usuarioDTO);
                 log.info("Usuário criado com sucesso, id={}", saved.getId());
                 URI location = UriLocationUtils
@@ -69,7 +70,7 @@ public class UsuarioController {
                         @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos"),
                         @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
         })
-        public ResponseEntity<UsuarioResponseDTO> atualizarUsuario(@PathVariable Long id,
+        public ResponseEntity<UsuarioResponseDTO> atualizarUsuario(@Valid @PathVariable Long id,
                         @RequestBody UsuarioRequestDTO usuarioDTO) {
                 UsuarioResponseDTO usuarioAtualizado = usuarioService.atualizarUsuario(id, usuarioDTO);
                 log.info("Usuário id={} atualizado com sucesso", usuarioAtualizado.getId());

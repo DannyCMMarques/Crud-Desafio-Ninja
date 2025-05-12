@@ -3,15 +3,14 @@ package com.crud.demo.models.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import com.crud.demo.models.Personagem;
 import com.crud.demo.models.DTO.personagem.PersonagemRequestDTO;
 import com.crud.demo.models.DTO.personagem.PersonagemResponseDTO;
+import com.crud.demo.models.Personagem;
 
 @Mapper(componentModel = "spring", uses = JutsuMapper.class)
 public interface PersonagemMapper {
 
 
-    @Mapping(source = "id",       target = "id")
     @Mapping(target = "jutsus", source = "jutsus", qualifiedByName = "mapToDto")
     PersonagemResponseDTO toDto(Personagem personagem);
   
@@ -22,7 +21,6 @@ public interface PersonagemMapper {
     @Mapping(source = "jutsus", target = "jutsus", qualifiedByName = "mapToEntity")
     Personagem toEntity(PersonagemRequestDTO dto);
 
-    @Mapping(source = "id",       target = "id")
     Personagem toEntity(PersonagemResponseDTO dto);
 
 }

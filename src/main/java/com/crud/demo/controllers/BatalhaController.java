@@ -45,7 +45,7 @@ public class BatalhaController {
                         @ApiResponse(responseCode = "400", description = "Dados inválidos")
         })
 
-        public ResponseEntity<BatalhaResponseDTO> cadastrarBatalha(@Valid @RequestBody BatalhaRequestDTO request) {
+        public ResponseEntity<BatalhaResponseDTO> cadastrarBatalha(@RequestBody(required = false) BatalhaRequestDTO request) {
                 BatalhaResponseDTO batalhaCriada = batalhaService.criarBatalha(request);
                 log.info("Batalha criada com sucesso, id={}", batalhaCriada.getId());
 
