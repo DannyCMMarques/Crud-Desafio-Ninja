@@ -1,6 +1,7 @@
 package com.crud.demo.models.DTO.participanteBatalha;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +16,7 @@ public class ParticipanteBatalhaRequestDTO {
     private Long batalha;
 
     @Schema(description = "Nome do usuário participante", example = "Naruto Uzumaki", required = true)
-    @NotNull
+    @NotBlank
     private String nomeUsuario;
 
     @Schema(description = "Nome do personagem escolhido pelo participante", example = "Kakashi Hatake", required = true)

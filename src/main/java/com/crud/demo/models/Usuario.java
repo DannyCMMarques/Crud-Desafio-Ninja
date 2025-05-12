@@ -18,7 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,15 +34,15 @@ public class Usuario implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotBlank(message = "Nome é obrigatório")
     @Column(nullable = false)
     private String nome;
 
-    @NotNull(message = "E-mail é obrigatório")
+    @NotBlank(message = "E-mail é obrigatório")
     @Email(message = "E-mail deve ser válido")
     private String email;
 
-    @NotNull(message = "Senha é obrigatória")
+    @NotBlank(message = "Senha é obrigatória")
     @JsonIgnore
     private String senha;
 

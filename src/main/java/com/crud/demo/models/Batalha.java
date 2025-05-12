@@ -43,7 +43,6 @@ public class Batalha {
     private StatusEnum status = StatusEnum.NAO_INICIADA;
 
     @OneToMany(mappedBy = "batalha", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @NotNull
     private List<ParticipanteBatalha> participantes = new ArrayList<>();
 
 }
